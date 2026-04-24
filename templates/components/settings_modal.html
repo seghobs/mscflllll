@@ -1,0 +1,64 @@
+<div id="settingsModal" class="modal-backdrop hidden">
+        <div class="modal-card fade-in" style="max-width:560px">
+            <div class="flex items-center justify-between mb-5">
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 bg-indigo-500/20 rounded-xl flex items-center justify-center">
+                        <i class="fa-solid fa-gear text-indigo-400"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-semibold text-lg">Ayarlar</h3>
+                        <p class="text-xs text-dark-400">Bearer Token Yönetimi</p>
+                    </div>
+                </div>
+                <button onclick="closeSettings()" class="w-8 h-8 rounded-lg bg-dark-700 hover:bg-dark-600 flex items-center justify-center transition"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+
+            <!-- Token List -->
+            <div id="tokenList" class="space-y-2 mb-4 max-h-72 overflow-y-auto pr-1"></div>
+
+            <!-- Browser Token Button -->
+            <div id="browserTokenSection">
+                <button onclick="startBrowserToken()" id="browserTokenBtn" class="w-full glass rounded-xl p-3 flex items-center gap-3 hover:bg-dark-700/50 transition group mb-4">
+                    <div class="w-9 h-9 bg-emerald-500/20 rounded-xl flex items-center justify-center flex-shrink-0">
+                        <i class="fa-solid fa-globe text-emerald-400"></i>
+                    </div>
+                    <div class="text-left">
+                        <div class="text-sm font-medium group-hover:text-white transition">Tarayıcı ile Token Al</div>
+                        <div class="text-[10px] text-dark-500">Playwright ile otomatik giriş yakalama</div>
+                    </div>
+                    <i class="fa-solid fa-arrow-right text-dark-500 ml-auto group-hover:text-emerald-400 transition"></i>
+                </button>
+            </div>
+            <div id="browserTokenWaiting" class="hidden mb-4 glass rounded-xl p-4">
+                <div class="flex items-center gap-3 mb-3">
+                    <div class="w-9 h-9 bg-emerald-500/20 rounded-xl flex items-center justify-center flex-shrink-0">
+                        <i class="fa-solid fa-spinner fa-spin text-emerald-400"></i>
+                    </div>
+                    <div>
+                        <div class="text-sm font-medium">Tarayıcı açık, giriş bekleniyor...</div>
+                        <div class="text-[10px] text-dark-500">Giriş yaptıktan sonra token otomatik yakalanır</div>
+                    </div>
+                </div>
+                <div class="w-full bg-dark-800 rounded-full h-1.5 overflow-hidden mb-3">
+                    <div class="bg-gradient-to-r from-emerald-500 to-teal-500 h-full rounded-full shimmer" style="width:100%"></div>
+                </div>
+                <button onclick="cancelBrowserToken()" class="w-full bg-dark-700 hover:bg-dark-600 px-4 py-2 rounded-xl text-xs transition">
+                    <i class="fa-solid fa-xmark mr-1"></i> İptal Et
+                </button>
+            </div>
+
+            <!-- Add Token -->
+            <div class="border-t border-dark-700 pt-4">
+                <div class="text-xs text-dark-400 mb-2 font-medium">Yeni Token Ekle</div>
+                <div class="space-y-2">
+                    <input type="text" id="newTokenName" class="w-full bg-dark-800/80 border border-dark-700 rounded-xl px-4 py-2.5 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30 outline-none transition text-sm" placeholder="İsim (opsiyonel)">
+                    <div class="flex gap-2">
+                        <input type="text" id="newTokenValue" class="flex-1 bg-dark-800/80 border border-dark-700 rounded-xl px-4 py-2.5 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30 outline-none transition text-sm font-mono" placeholder="Bearer token değeri...">
+                        <button onclick="addToken()" class="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 px-5 py-2.5 rounded-xl font-semibold text-sm flex items-center gap-2 transition-all btn-glow whitespace-nowrap">
+                            <i class="fa-solid fa-plus"></i> Ekle
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>

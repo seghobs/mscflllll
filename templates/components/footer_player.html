@@ -1,0 +1,60 @@
+<div id="footerPlayer" class="footer-player">
+        <div class="fp-inner">
+            <!-- Album Art -->
+            <div class="fp-art" id="fpArt">
+                <i class="fa-solid fa-music"></i>
+            </div>
+
+            <!-- Controls -->
+            <div class="fp-controls">
+                <button class="fp-skip" id="fpSkipBack"
+                    onmousedown="fpStartSeek(-1)" onmouseup="fpStopSeek()" onmouseleave="fpStopSeek()"
+                    ontouchstart="fpStartSeek(-1)" ontouchend="fpStopSeek()" ontouchcancel="fpStopSeek()">
+                    <i class="fa-solid fa-backward"></i>
+                    <span class="fp-skip-label">10</span>
+                </button>
+                <button class="fp-play" id="fpPlayBtn" onclick="fpToggle()">
+                    <i class="fa-solid fa-play" id="fpPlayIcon"></i>
+                </button>
+                <button class="fp-skip" id="fpSkipFwd"
+                    onmousedown="fpStartSeek(1)" onmouseup="fpStopSeek()" onmouseleave="fpStopSeek()"
+                    ontouchstart="fpStartSeek(1)" ontouchend="fpStopSeek()" ontouchcancel="fpStopSeek()">
+                    <i class="fa-solid fa-forward"></i>
+                    <span class="fp-skip-label">10</span>
+                </button>
+            </div>
+
+            <!-- Progress + Info -->
+            <div class="fp-info">
+                <div class="fp-title-row">
+                    <div class="fp-title" id="fpTitle">-</div>
+                </div>
+                <div class="fp-bar-wrap" id="fpBarWrap"
+                    onmousedown="fpBarDown(event)" onmousemove="fpBarMove(event)" onmouseup="fpBarUp(event)"
+                    ontouchstart="fpBarDown(event)" ontouchmove="fpBarMove(event)" ontouchend="fpBarUp(event)">
+                    <div class="fp-bar-track">
+                        <div class="fp-bar-fill" id="fpBar">
+                            <div class="fp-bar-thumb"></div>
+                        </div>
+                    </div>
+                    <div class="fp-seek-indicator" id="fpSeekIndicator">+10s</div>
+                </div>
+                <div class="fp-time">
+                    <span id="fpCur">0:00</span>
+                    <span id="fpDur">0:00</span>
+                </div>
+            </div>
+
+            <!-- Right Side -->
+            <div class="fp-right">
+                <div class="fp-vol-wrap">
+                    <i class="fa-solid fa-volume-high fp-vol-icon" id="fpVolIcon" onclick="fpMute()"></i>
+                    <input type="range" class="fp-vol-slider" min="0" max="1" step="0.05" value="1"
+                        oninput="fpVolume(this.value)" id="fpVolSlider">
+                </div>
+                <button class="fp-close" onclick="fpClose()">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+        </div>
+    </div>

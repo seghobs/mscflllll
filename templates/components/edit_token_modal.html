@@ -1,0 +1,29 @@
+<div id="editTokenModal" class="modal-backdrop hidden">
+        <div class="modal-card fade-in" style="max-width:480px">
+            <div class="flex items-center justify-between mb-5">
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 bg-indigo-500/20 rounded-xl flex items-center justify-center">
+                        <i class="fa-solid fa-pen text-indigo-400"></i>
+                    </div>
+                    <h3 class="font-semibold text-lg">Token Düzenle</h3>
+                </div>
+                <button onclick="closeEditModal()" class="w-8 h-8 rounded-lg bg-dark-700 hover:bg-dark-600 flex items-center justify-center transition"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="space-y-3">
+                <div>
+                    <label class="block text-xs text-dark-400 mb-1.5">İsim</label>
+                    <input type="text" id="editTokenName" class="w-full bg-dark-800/80 border border-dark-700 rounded-xl px-4 py-2.5 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30 outline-none transition text-sm" placeholder="Token adı">
+                </div>
+                <div>
+                    <label class="block text-xs text-dark-400 mb-1.5">Token Değeri</label>
+                    <textarea id="editTokenValue" class="w-full bg-dark-800/80 border border-dark-700 rounded-xl px-4 py-2.5 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30 outline-none transition text-sm font-mono resize-y" rows="3" placeholder="Bearer token değeri"></textarea>
+                </div>
+            </div>
+            <div class="flex gap-2 mt-5">
+                <button onclick="closeEditModal()" class="flex-1 bg-dark-700 hover:bg-dark-600 px-4 py-2.5 rounded-xl text-sm font-medium transition">İptal</button>
+                <button onclick="saveEditToken()" class="flex-1 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all btn-glow">
+                    <i class="fa-solid fa-check mr-1"></i> Kaydet
+                </button>
+            </div>
+        </div>
+    </div>

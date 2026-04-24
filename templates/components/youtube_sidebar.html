@@ -1,0 +1,33 @@
+<div id="ytVideosSidebar" class="yt-sidebar">
+        <div class="yt-sidebar-inner">
+            <div class="yt-sidebar-header">
+                <div class="flex items-center gap-2">
+                    <i class="fa-brands fa-youtube text-red-400 text-lg"></i>
+                    <span class="font-semibold text-sm">Kanal Videolarım</span>
+                </div>
+                <button onclick="toggleYtVideosSidebar()" class="yt-sidebar-close">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="yt-sidebar-filters">
+                <button onclick="filterYtVideos('views_desc')" class="yt-filter-btn active" data-filter="views_desc">
+                    <i class="fa-solid fa-arrow-down-wide-short"></i> Çok İzlenen
+                </button>
+                <button onclick="filterYtVideos('views_asc')" class="yt-filter-btn" data-filter="views_asc">
+                    <i class="fa-solid fa-arrow-up-wide-short"></i> Az İzlenen
+                </button>
+                <button onclick="filterYtVideos('date_desc')" class="yt-filter-btn" data-filter="date_desc">
+                    <i class="fa-solid fa-clock-rotate-left"></i> En Yeni
+                </button>
+                <button onclick="filterYtVideos('date_asc')" class="yt-filter-btn" data-filter="date_asc">
+                    <i class="fa-solid fa-clock"></i> En Eski
+                </button>
+            </div>
+            <div id="ytVideosList" class="yt-sidebar-list">
+                <div class="flex items-center justify-center py-8">
+                    <i class="fa-solid fa-spinner fa-spin text-dark-500 mr-2"></i>
+                    <span class="text-dark-500 text-sm">Yükleniyor...</span>
+                </div>
+            </div>
+        </div>
+    </div>
