@@ -2,6 +2,7 @@ import os
 import json
 import uuid
 from .config import TOKENS_FILE, TOKEN_LEGACY
+from .account_manager import switch_to_next_account
 
 def _init_tokens():
     if os.path.exists(TOKENS_FILE):
@@ -30,7 +31,10 @@ def load_token():
     tokens = _read_tokens()
     active = [t for t in tokens if t.get("active", True)]
     if not active:
-        raise FileNotFoundError("Aktif token yok")
+        new_t = switch_to_next_account()
+        if new_t:
+            return new_t
+        raise FileNotFoundError("Aktif token yok ve yeni hesaba gecilemedi.")
     return active[0]["token"]
 
 def get_headers(token):

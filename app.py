@@ -1,12 +1,13 @@
 from flask import Flask, render_template, jsonify, Response, request
 import time
 
-from core.tasks import task_queue, sse_clients
+from core.tasks import task_queue, sse_clients, sse_notify
 from routes.auth_routes import auth_bp
 from routes.musicful_routes import musicful_bp
 from routes.youtube_routes import youtube_bp
 from routes.video_routes import video_bp
 from routes.seo_routes import seo_bp
+from routes.style_routes import data_bp
 
 app = Flask(__name__)
 
@@ -26,6 +27,7 @@ app.register_blueprint(musicful_bp)
 app.register_blueprint(youtube_bp)
 app.register_blueprint(video_bp)
 app.register_blueprint(seo_bp)
+app.register_blueprint(data_bp)
 
 @app.route("/")
 def index():
@@ -50,6 +52,14 @@ def api_queue_status(task_id):
         "result": t.get("result"), 
         "error": t.get("error")
     })
+
+@app.route("/api/queue/cancel/<task_id>", methods=["POST"])
+def api_cancel_task(task_id):
+    if task_id in task_queue:
+        task_queue[task_id]["status"] = "cancelled"
+        sse_notify("task_update", {"id": task_id, "status": "cancelled"})
+        return jsonify({"ok": True})
+    return jsonify({"ok": False, "error": "Görev bulunamadı"}), 404
 
 @app.route("/api/events")
 def api_events():

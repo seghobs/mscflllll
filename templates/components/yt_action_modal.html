@@ -1,0 +1,63 @@
+<div id="ytActionModal" class="modal-backdrop hidden transition-all duration-300">
+    <div class="modal-card max-w-sm transform scale-95 opacity-0 transition-all duration-300" id="ytActionCard">
+        <!-- State 1: Selection -->
+        <div id="ytActionStateSelect" class="flex flex-col items-center text-center space-y-6">
+            <div class="w-16 h-16 bg-white/5 border border-white/10 rounded-2xl flex items-center justify-center shadow-xl">
+                <i class="fa-brands fa-youtube text-3xl text-white"></i>
+            </div>
+            
+            <div class="space-y-2">
+                <h3 class="text-lg font-bold tracking-tight text-white">Video Algılandı</h3>
+                <p class="text-xs text-zinc-500 font-medium leading-relaxed px-4">
+                    YouTube bağlantısını yapıştırdınız. Bu video ile ne yapmak istersiniz?
+                </p>
+            </div>
+
+            <div class="w-full space-y-3 pt-2">
+                <button onclick="ytActionProcess()" class="w-full shadcn-button-primary py-3.5 text-sm flex items-center justify-center gap-2 group">
+                    <i class="fa-solid fa-cloud-arrow-up group-hover:scale-110 transition"></i>
+                    <span>Hemen İndir ve İşle</span>
+                </button>
+                
+                <button onclick="ytActionListen()" class="w-full shadcn-button-secondary py-3.5 text-sm flex items-center justify-center gap-2 group">
+                    <i class="fa-solid fa-play group-hover:scale-110 transition"></i>
+                    <span>Önce Bir Dinle</span>
+                </button>
+
+                <button onclick="closeYtActionModal()" class="w-full py-2 text-[10px] font-bold text-zinc-600 uppercase tracking-widest hover:text-white transition">
+                    Vazgeç
+                </button>
+            </div>
+        </div>
+
+        <!-- State 2: Confirm while playing -->
+        <div id="ytActionStatePlaying" class="hidden flex flex-col items-center text-center space-y-6">
+            <div class="w-16 h-16 bg-white/5 border border-white/10 rounded-2xl flex items-center justify-center shadow-xl animate-pulse">
+                <i class="fa-solid fa-music text-2xl text-white"></i>
+            </div>
+            
+            <div class="space-y-2">
+                <h3 class="text-lg font-bold tracking-tight text-white">Şu An Dinliyorsunuz</h3>
+                <p class="text-xs text-zinc-500 font-medium leading-relaxed px-4">
+                    Eğer bu şarkı doğruysa hemen işleme başlayabilirsiniz.
+                </p>
+            </div>
+
+            <div class="w-full space-y-3 pt-2">
+                <button onclick="ytActionProcess()" class="w-full shadcn-button-primary py-3.5 text-sm flex items-center justify-center gap-2 group">
+                    <i class="fa-solid fa-wand-magic-sparkles group-hover:rotate-12 transition"></i>
+                    <span>Evet, Doğru Şarkı! İşlemi Başlat</span>
+                </button>
+                
+                <button onclick="closeYtActionModal()" class="w-full py-3.5 text-sm font-bold text-zinc-500 hover:text-white transition border border-zinc-800 rounded-lg hover:bg-zinc-900">
+                    Sadece Dinlemeye Devam Et
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    #ytActionModal.visible { display: flex !important; opacity: 1; }
+    #ytActionModal.visible #ytActionCard { transform: scale(1); opacity: 1; }
+</style>

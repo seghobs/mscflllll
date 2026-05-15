@@ -1,62 +1,76 @@
 <div id="settingsModal" class="modal-backdrop hidden">
         <div class="modal-card fade-in" style="max-width:560px">
-            <div class="flex items-center justify-between mb-5">
-                <div class="flex items-center gap-3">
-                    <div class="w-9 h-9 bg-indigo-500/20 rounded-xl flex items-center justify-center">
-                        <i class="fa-solid fa-gear text-indigo-400"></i>
-                    </div>
-                    <div>
-                        <h3 class="font-semibold text-lg">Ayarlar</h3>
-                        <p class="text-xs text-dark-400">Bearer Token Yönetimi</p>
-                    </div>
+            <div class="flex items-center justify-between mb-8">
+                <div>
+                    <h3 class="text-xl font-bold tracking-tight">Ayarlar</h3>
+                    <p class="text-xs text-zinc-500 font-medium">Token Yönetimi</p>
                 </div>
-                <button onclick="closeSettings()" class="w-8 h-8 rounded-lg bg-dark-700 hover:bg-dark-600 flex items-center justify-center transition"><i class="fa-solid fa-xmark"></i></button>
+                <button onclick="closeSettings()" class="text-zinc-500 hover:text-white transition"><i class="fa-solid fa-xmark text-sm"></i></button>
             </div>
 
-            <!-- Token List -->
-            <div id="tokenList" class="space-y-2 mb-4 max-h-72 overflow-y-auto pr-1"></div>
-
-            <!-- Browser Token Button -->
-            <div id="browserTokenSection">
-                <button onclick="startBrowserToken()" id="browserTokenBtn" class="w-full glass rounded-xl p-3 flex items-center gap-3 hover:bg-dark-700/50 transition group mb-4">
-                    <div class="w-9 h-9 bg-emerald-500/20 rounded-xl flex items-center justify-center flex-shrink-0">
-                        <i class="fa-solid fa-globe text-emerald-400"></i>
-                    </div>
-                    <div class="text-left">
-                        <div class="text-sm font-medium group-hover:text-white transition">Tarayıcı ile Token Al</div>
-                        <div class="text-[10px] text-dark-500">Playwright ile otomatik giriş yakalama</div>
-                    </div>
-                    <i class="fa-solid fa-arrow-right text-dark-500 ml-auto group-hover:text-emerald-400 transition"></i>
-                </button>
-            </div>
-            <div id="browserTokenWaiting" class="hidden mb-4 glass rounded-xl p-4">
-                <div class="flex items-center gap-3 mb-3">
-                    <div class="w-9 h-9 bg-emerald-500/20 rounded-xl flex items-center justify-center flex-shrink-0">
-                        <i class="fa-solid fa-spinner fa-spin text-emerald-400"></i>
-                    </div>
-                    <div>
-                        <div class="text-sm font-medium">Tarayıcı açık, giriş bekleniyor...</div>
-                        <div class="text-[10px] text-dark-500">Giriş yaptıktan sonra token otomatik yakalanır</div>
-                    </div>
-                </div>
-                <div class="w-full bg-dark-800 rounded-full h-1.5 overflow-hidden mb-3">
-                    <div class="bg-gradient-to-r from-emerald-500 to-teal-500 h-full rounded-full shimmer" style="width:100%"></div>
-                </div>
-                <button onclick="cancelBrowserToken()" class="w-full bg-dark-700 hover:bg-dark-600 px-4 py-2 rounded-xl text-xs transition">
-                    <i class="fa-solid fa-xmark mr-1"></i> İptal Et
-                </button>
+            <div class="flex items-center gap-2 mb-4">
+                <button onclick="switchTab('tokens')" id="tabTokens" class="flex-1 py-2 text-xs font-bold bg-zinc-800 text-white rounded transition">Aktif Tokenlar</button>
+                <button onclick="switchTab('accounts')" id="tabAccounts" class="flex-1 py-2 text-xs font-bold bg-zinc-900 text-zinc-500 rounded transition">Hesaplar</button>
+                <button onclick="switchTab('bot')" id="tabBot" class="flex-1 py-2 text-xs font-bold bg-zinc-900 text-zinc-500 rounded transition">Hesap Üretici</button>
             </div>
 
-            <!-- Add Token -->
-            <div class="border-t border-dark-700 pt-4">
-                <div class="text-xs text-dark-400 mb-2 font-medium">Yeni Token Ekle</div>
-                <div class="space-y-2">
-                    <input type="text" id="newTokenName" class="w-full bg-dark-800/80 border border-dark-700 rounded-xl px-4 py-2.5 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30 outline-none transition text-sm" placeholder="İsim (opsiyonel)">
+            <!-- Tab: Tokens -->
+            <div id="viewTokens" class="space-y-4">
+                <div id="tokenList" class="space-y-2 mb-4 max-h-72 overflow-y-auto pr-1"></div>
+            </div>
+
+            <!-- Tab: Accounts -->
+            <div id="viewAccounts" class="hidden space-y-4">
+                <div class="flex items-center justify-between mb-2">
+                    <div class="text-xs text-zinc-500">Sistemdeki tüm kayıtlı hesaplar.</div>
+                    <select id="accountsSort" onchange="applyAccountSort()" class="bg-zinc-900 border border-zinc-800 text-zinc-400 text-[10px] font-bold rounded px-2 py-1 outline-none cursor-pointer">
+                        <option value="credits_desc">Kredi (En Yüksek)</option>
+                        <option value="credits_asc">Kredi (En Düşük)</option>
+                        <option value="newest">Tarih (En Yeni)</option>
+                        <option value="oldest">Tarih (En Eski)</option>
+                    </select>
+                </div>
+                <div id="accountsList" class="space-y-2 max-h-96 overflow-y-auto pr-1"></div>
+            </div>
+
+            <!-- Tab: Bot -->
+            <div id="viewBot" class="hidden space-y-4">
+                <div class="bg-zinc-900/50 border border-zinc-800 rounded-xl p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <h4 class="text-sm font-bold text-white">Musicful Hesap Üretici</h4>
+                        <span id="botStatusBadge" class="bg-zinc-800 text-zinc-400 text-[10px] px-2 py-1 rounded font-bold uppercase">Beklemede</span>
+                    </div>
+                    <div class="space-y-4 mb-6">
+                        <div>
+                            <label class="block text-[10px] font-bold uppercase text-zinc-500 mb-1">Üretilecek Hesap Sayısı</label>
+                            <input type="number" id="botCount" class="shadcn-input w-full px-4 py-2 text-sm" value="1" min="1">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold uppercase text-zinc-500 mb-1">Varsayılan Şifre</label>
+                            <input type="text" id="botPassword" class="shadcn-input w-full px-4 py-2 text-sm" value="MusicfulPass123!">
+                        </div>
+                    </div>
                     <div class="flex gap-2">
-                        <input type="text" id="newTokenValue" class="flex-1 bg-dark-800/80 border border-dark-700 rounded-xl px-4 py-2.5 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30 outline-none transition text-sm font-mono" placeholder="Bearer token değeri...">
-                        <button onclick="addToken()" class="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 px-5 py-2.5 rounded-xl font-semibold text-sm flex items-center gap-2 transition-all btn-glow whitespace-nowrap">
-                            <i class="fa-solid fa-plus"></i> Ekle
-                        </button>
+                        <button onclick="startBot()" id="btnStartBot" class="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2 rounded transition">Başlat</button>
+                        <button onclick="stopBot()" id="btnStopBot" class="flex-1 bg-red-600 hover:bg-red-500 text-white font-bold py-2 rounded transition hidden">Durdur</button>
+                    </div>
+                    
+                    <div id="botParentInfo" class="mt-4 hidden p-3 bg-emerald-900/20 border border-emerald-900/50 rounded-lg flex items-center justify-between">
+                        <span class="text-[10px] font-bold text-emerald-500 uppercase tracking-widest">Aktif Referans:</span>
+                        <span id="botParentEmailText" class="text-xs font-bold text-emerald-300">Bekleniyor...</span>
+                    </div>
+
+                    <div id="botProgress" class="mt-4 hidden">
+                        <div class="flex justify-between text-[10px] font-bold text-zinc-400 mb-1">
+                            <span id="botProgressText">0 / 0</span>
+                            <span id="botProgressPercent">0%</span>
+                        </div>
+                        <div class="w-full bg-zinc-800 rounded-full h-1.5">
+                            <div id="botProgressBar" class="bg-emerald-500 h-1.5 rounded-full transition-all" style="width:0%"></div>
+                        </div>
+                    </div>
+                    <div class="mt-4 bg-black/50 border border-zinc-800 rounded p-3 text-[10px] font-mono text-zinc-400 h-32 overflow-y-auto" id="botConsole">
+                        Hazır...
                     </div>
                 </div>
             </div>

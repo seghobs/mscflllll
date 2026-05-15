@@ -15,3 +15,25 @@ COVERS_OUTPUT = os.path.join(BASE_DIR, "static", "covers")
 os.makedirs(VIDEO_TEMP, exist_ok=True)
 os.makedirs(VIDEO_OUTPUT, exist_ok=True)
 os.makedirs(COVERS_OUTPUT, exist_ok=True)
+
+ACCOUNTS_FILE = os.path.join(BASE_DIR, "accounts.json")
+
+RSA_PUB_KEY_B64 = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCuFn+Lbhc66BwGyaTXJYg3IEquu3nFViVPGeIMfamvtrWcJhA9A12tL04BmczMGQArb2pGn4N9AyOHXdypfVixZP2CHPlhoyD/TQ56OwcXBn9BoFT3dzocURHhIcv80aaHRmnRdIxIruE6aiUJIxgjar+KDppLNgXH0pi4jiabdwIDAQAB"
+
+LYRICS_POOL = [
+    {"lyrics": "Moonlight dances on the silent waves, secrets kept in ocean graves. A melody of lost and found, where only echoes make a sound.", "style": "Dreamy Pop"},
+    {"lyrics": "Neon lights in the rain, washing away the pain. A city that never sleeps, secrets that it keeps.", "style": "Cyberpunk Synthwave"},
+    {"lyrics": "Walking through the midnight streets, heartbeat syncing to the beats. Every shadow tells a story, fading into morning glory.", "style": "Lo-fi Hip Hop"},
+    {"lyrics": "Stars collide in the velvet sky, whispers of a lullaby. Time stands still when you are around, love is the only sound.", "style": "Indie Folk"},
+    {"lyrics": "Thunder rolls across the plains, washing clean these dusty lanes. Freedom rides on every breeze, dancing through the autumn trees.", "style": "Country Rock"},
+    {"lyrics": "Digital dreams in binary code, traveling down the data road. Circuits fire and signals fly, reaching for the digital sky.", "style": "Electronic"},
+    {"lyrics": "Sunrise paints the mountain gold, stories that have never been told. Rivers carry ancient songs, where the wild heart belongs.", "style": "Ambient"},
+    {"lyrics": "Broken glass on the dance floor, can not pretend anymore. The rhythm takes control tonight, burning brighter than the light.", "style": "Dance Pop"},
+    {"lyrics": "Underneath the cherry bloom, silence fills the empty room. Paper cranes and origami dreams, nothing is quite what it seems.", "style": "J-Pop"},
+    {"lyrics": "Concrete jungle steel and stone, making this city my own. Hustling through the endless grind, leaving yesterday behind.", "style": "Trap"},
+    {"lyrics": "Waves crash upon the shore, I do not need anything more. Salt and sand between my toes, where the ocean river flows.", "style": "Surf Rock"},
+    {"lyrics": "Fireflies in the summer night, everything is gonna be alright. Lazy days and starlit skies, catching dreams as time flies by.", "style": "Acoustic Pop"},
+    {"lyrics": "Velvet shadows cross the stage, turning back another page. Spotlight fades but music stays, echoing through endless days.", "style": "Jazz"},
+    {"lyrics": "Crystal towers touch the clouds, whispers lost among the crowds. Every heartbeat tells the time, rhythm flowing like a rhyme.", "style": "Future Bass"},
+    {"lyrics": "Autumn leaves fall one by one, memories of summer sun. Golden light through windowpanes, dancing softly in the rain.", "style": "Chill Pop"}
+]

@@ -3,3 +3,6 @@ requests
 yt-dlp
 playwright
 google-genai
+curl_cffi
+pycryptodome
+httpx

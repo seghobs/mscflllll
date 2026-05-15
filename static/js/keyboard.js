@@ -1,6 +1,18 @@
 /* ===== KEYBOARD SHORTCUTS ===== */
 document.addEventListener('keydown', function(e) {
-    // Ignore if typing in input/textarea
+    if ((e.ctrlKey || e.metaKey) && e.key === 'i') {
+        e.preventDefault();
+        if (typeof toggleQueuePanel === 'function') toggleQueuePanel();
+        return;
+    }
+
+    if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+        e.preventDefault();
+        if (typeof openStyleManager === 'function') openStyleManager();
+        return;
+    }
+
+    // Ignore other shortcuts if typing in input/textarea
     if(e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.isContentEditable) return;
     if(!fpAudio) return;
 

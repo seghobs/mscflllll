@@ -64,9 +64,12 @@ function updateSeoDraft() {
     if(typeof saveVideoState === 'function') saveVideoState(videoSongId, { seo: st });
 }
 document.addEventListener('DOMContentLoaded', () => {
-    document.getElementById('ytUploadTitle').addEventListener('input', updateSeoDraft);
-    document.getElementById('ytUploadDesc').addEventListener('input', updateSeoDraft);
-    document.getElementById('ytUploadTags').addEventListener('input', updateSeoDraft);
+    const t = document.getElementById('ytUploadTitle');
+    const d = document.getElementById('ytUploadDesc');
+    const tags = document.getElementById('ytUploadTags');
+    if(t) t.addEventListener('input', updateSeoDraft);
+    if(d) d.addEventListener('input', updateSeoDraft);
+    if(tags) tags.addEventListener('input', updateSeoDraft);
 });
 
 async function seoFetch(url, body, loadingEl, songTitle, songLyrics) {

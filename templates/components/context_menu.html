@@ -1,7 +1,21 @@
-<div id="ctxMenu" class="ctx-menu hidden">
-        <div class="ctx-item" onclick="ctxDinle()"><i class="fa-solid fa-headphones text-indigo-400"></i> Dinle</div>
-        <div class="ctx-item" onclick="ctxIndir()"><i class="fa-solid fa-download text-green-400"></i> İndir</div>
-        <div class="ctx-divider" style="height:1px;background:#334155;margin:4px 8px;"></div>
-        <div class="ctx-item" onclick="ctxCover()"><i class="fa-solid fa-wand-magic-sparkles text-yellow-400"></i> Cover Yap</div>
-        <div class="ctx-item" onclick="ctxVideo()"><i class="fa-solid fa-film text-pink-400"></i> Videoya Dönüştür</div>
+<div id="ctxMenu" class="shadcn-card hidden fixed z-[9999] min-w-[200px] p-1.5 shadow-2xl">
+    <div class="px-3 py-1.5 text-[10px] font-bold uppercase tracking-widest text-zinc-500">İşlemler</div>
+    <div class="h-px bg-zinc-800 my-1 mx-2"></div>
+    <div class="flex items-center gap-3 px-3 py-2.5 rounded-md hover:bg-zinc-900 cursor-pointer text-sm transition group" onclick="ctxDinle()">
+        <i class="fa-solid fa-headphones text-zinc-500 group-hover:text-white transition"></i> 
+        <span class="font-medium group-hover:text-white transition">Dinle</span>
     </div>
+    <div class="flex items-center gap-3 px-3 py-2.5 rounded-md hover:bg-zinc-900 cursor-pointer text-sm transition group" onclick="ctxIndir()">
+        <i class="fa-solid fa-download text-zinc-500 group-hover:text-white transition"></i> 
+        <span class="font-medium group-hover:text-white transition">İndir</span>
+    </div>
+    <div class="h-px bg-zinc-800 my-1 mx-2"></div>
+    <div class="flex items-center gap-3 px-3 py-2.5 rounded-md hover:bg-zinc-900 cursor-pointer text-sm transition group" onclick="ctxCover()">
+        <i class="fa-solid fa-wand-magic-sparkles text-zinc-500 group-hover:text-white transition"></i> 
+        <span class="font-medium group-hover:text-white transition">Cover Yap</span>
+    </div>
+    <div class="flex items-center gap-3 px-3 py-2.5 rounded-md hover:bg-zinc-900 cursor-pointer text-sm transition group" onclick="ctxVideo()">
+        <i class="fa-solid fa-film text-zinc-500 group-hover:text-white transition"></i> 
+        <span class="font-medium group-hover:text-white transition">Videoya Dönüştür</span>
+    </div>
+</div>

@@ -4,12 +4,28 @@ let ytSidebarLoaded = false;
 
 function toggleYtVideosSidebar() {
     const sidebar = document.getElementById('ytVideosSidebar');
-    const isOpen = sidebar.classList.contains('open');
-    if(isOpen) {
-        sidebar.classList.remove('open');
-    } else {
-        sidebar.classList.add('open');
+    if(!sidebar) return;
+    const isHidden = sidebar.classList.contains('-translate-x-[calc(100%+1rem)]');
+    
+    // İşlem Kuyruğu açıksa kapat
+    const queueSidebar = document.getElementById('queueSidebar');
+    if (isHidden && queueSidebar && !queueSidebar.classList.contains('-translate-x-[calc(100%+1rem)]')) {
+        if (typeof toggleQueuePanel === 'function') toggleQueuePanel();
+    }
+    
+    // Taslaklar açıksa kapat
+    const draftsPanel = document.getElementById('draftsPanel');
+    if (isHidden && draftsPanel && !draftsPanel.classList.contains('-translate-x-[calc(100%+1rem)]')) {
+        if (typeof toggleDraftsPanel === 'function') toggleDraftsPanel();
+    }
+
+    if(isHidden) {
+        sidebar.classList.remove('-translate-x-[calc(100%+1rem)]');
+        sidebar.classList.add('translate-x-0');
         if(!ytSidebarLoaded) loadYtVideos();
+    } else {
+        sidebar.classList.remove('translate-x-0');
+        sidebar.classList.add('-translate-x-[calc(100%+1rem)]');
     }
 }
 
@@ -81,4 +97,86 @@ function renderYtVideos(videos) {
             </div>
         `;
     });
+}
+
+/* ===== YOUTUBE URL PASTE HANDLER ===== */
+document.addEventListener('DOMContentLoaded', () => {
+    const ytUrlInput = document.getElementById('ytUrl');
+    if (ytUrlInput) {
+        let timeout;
+        ytUrlInput.addEventListener('input', (e) => {
+            clearTimeout(timeout);
+            timeout = setTimeout(() => {
+                const val = e.target.value.trim();
+                if (val.includes('youtube.com/watch?v=') || val.includes('youtu.be/')) {
+                    openYtActionModal();
+                }
+            }, 300);
+        });
+    }
+});
+
+function openYtActionModal() {
+    const modal = document.getElementById('ytActionModal');
+    if(!modal) return;
+    
+    // Reset state to initial
+    document.getElementById('ytActionStateSelect').classList.remove('hidden');
+    document.getElementById('ytActionStatePlaying').classList.add('hidden');
+    
+    modal.classList.remove('hidden');
+    setTimeout(() => modal.classList.add('visible'), 10);
+}
+
+function closeYtActionModal() {
+    const modal = document.getElementById('ytActionModal');
+    if(!modal) return;
+    modal.classList.remove('visible');
+    setTimeout(() => modal.classList.add('hidden'), 300);
+}
+
+function ytActionProcess() {
+    closeYtActionModal();
+    downloadYoutube();
+}
+
+async function ytActionListen() {
+    const url = document.getElementById('ytUrl').value.trim();
+    const btn = document.querySelector('#ytActionStateSelect [onclick="ytActionListen()"]');
+    const originalContent = btn.innerHTML;
+    
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Yükleniyor...';
+    
+    try {
+        const resp = await fetch(`/api/yt-info?url=${encodeURIComponent(url)}`);
+        const data = await resp.json();
+        
+        if (data.title) {
+            if(typeof playYtVideo === 'function') {
+                playYtVideo(data.id, data.title);
+            }
+            
+            // Switch to playing state instead of closing
+            document.getElementById('ytActionStateSelect').classList.add('hidden');
+            document.getElementById('ytActionStatePlaying').classList.remove('hidden');
+        } else {
+            let videoId = '';
+            if (url.includes('v=')) videoId = url.split('v=')[1].split('&')[0];
+            else if (url.includes('youtu.be/')) videoId = url.split('youtu.be/')[1].split('?')[0];
+            if(videoId && typeof playYtVideo === 'function') {
+                playYtVideo(videoId, 'YouTube Önizleme');
+                document.getElementById('ytActionStateSelect').classList.add('hidden');
+                document.getElementById('ytActionStatePlaying').classList.remove('hidden');
+            } else {
+                closeYtActionModal();
+            }
+        }
+    } catch (e) {
+        console.error('Info error:', e);
+        closeYtActionModal();
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = originalContent;
+    }
 }

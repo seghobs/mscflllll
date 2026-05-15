@@ -92,11 +92,34 @@ async function downloadYoutube() {
     const btn = document.getElementById('ytBtn');
     const statusDiv = document.getElementById('ytStatus');
     const statusText = document.getElementById('ytStatusText');
+    
+    // Progress bar elements
+    const mainStatus = document.getElementById('uploadStatus');
+    const progress = document.getElementById('uploadProgress');
+    const mainText = document.getElementById('uploadText');
+    const percent = null; // Removed percentage text display
+    const label = document.getElementById('fileLabel');
 
     btn.disabled = true;
     btn.classList.add('opacity-50');
     statusDiv.classList.remove('hidden');
     statusText.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-1"></i>Kuyruğa eklendi...';
+
+    // Activate main progress bar for YouTube
+    if(mainStatus) mainStatus.classList.remove('hidden');
+    if(progress) {
+        progress.style.transition = 'none';
+        progress.style.width = '5%';
+    }
+    if(percent) {} // Removed percentage update
+    if(mainText) mainText.innerHTML = '<i class="fa-brands fa-youtube text-red-500 mr-2"></i><span class="text-[10px] font-bold uppercase tracking-widest text-zinc-500">YouTube Hazırlanıyor...</span>';
+    if(label) label.innerHTML = `
+        <div class="w-16 h-16 bg-red-500/10 border border-red-500/20 rounded-2xl flex items-center justify-center mx-auto mb-6">
+            <i class="fa-brands fa-youtube text-3xl text-red-500"></i>
+        </div>
+        <div class="text-white font-bold tracking-tight mb-2">YouTube Aktarımı</div>
+        <div class="text-zinc-500 text-[10px] font-bold uppercase tracking-widest">Video işleniyor...</div>
+    `;
 
     try {
         const resp = await fetch('/api/youtube', {
@@ -107,13 +130,19 @@ async function downloadYoutube() {
         const data = await resp.json();
         if(data.error) {
             statusText.innerHTML = `<i class="fa-solid fa-xmark mr-1 text-red-400"></i>${data.error}`;
+            if(mainText) mainText.innerHTML = `<i class="fa-solid fa-xmark text-red-500 mr-2"></i>Hata: ${data.error}`;
             btn.disabled = false;
             btn.classList.remove('opacity-50');
             return;
         }
+        
+        if(progress) progress.style.width = '15%';
+        if(percent) {} // Removed percentage update
         statusText.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-1"></i>İndiriliyor ve yükleniyor...';
+        if(mainText) mainText.innerHTML = '<i class="fa-solid fa-cloud-arrow-down fa-bounce text-zinc-400 mr-2"></i><span class="text-[10px] font-bold uppercase tracking-widest text-zinc-400">Video indiriliyor ve sunucuya aktarılıyor...</span>';
     } catch(e) {
         statusText.innerHTML = `<i class="fa-solid fa-xmark mr-1 text-red-400"></i>${e.message}`;
+        if(mainText) mainText.innerHTML = `<i class="fa-solid fa-xmark text-red-500 mr-2"></i>Ağ Hatası`;
         btn.disabled = false;
         btn.classList.remove('opacity-50');
     }

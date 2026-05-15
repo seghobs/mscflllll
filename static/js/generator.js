@@ -5,15 +5,19 @@ async function createSong() {
 
     const card = document.createElement('div');
     card.id = taskId;
-    card.className = 'bg-dark-800/60 rounded-xl p-4 border border-dark-700/50 fade-in';
+    card.className = 'shadcn-card p-4 mb-3 fade-in';
     card.innerHTML = `
-        <div class="flex items-center gap-3 mb-3">
-            <i class="fa-solid fa-spinner fa-spin text-indigo-400"></i>
-            <span class="ct-text text-sm text-dark-300 flex-1"><i class="fa-solid fa-wand-magic-sparkles mr-1"></i>Şarkı oluşturuluyor...</span>
-            <span class="ct-title text-xs text-dark-500 truncate max-w-[120px]">${state.title || ''}</span>
+        <div class="flex items-center gap-3 mb-4">
+            <div class="w-8 h-8 bg-zinc-900 border border-zinc-800 rounded-md flex items-center justify-center">
+                <i class="fa-solid fa-spinner fa-spin text-white text-xs"></i>
+            </div>
+            <div class="flex-1 min-w-0">
+                <div class="text-[10px] font-bold uppercase tracking-widest text-zinc-500 mb-1">Şarkı Üretimi</div>
+                <div class="ct-text text-xs font-bold text-white truncate">${state.title || 'Yeni Şarkı'}</div>
+            </div>
         </div>
-        <div class="bg-dark-900 rounded-full h-2 overflow-hidden">
-            <div class="ct-bar bg-gradient-to-r from-green-500 to-emerald-500 h-full rounded-full transition-all duration-500" style="width:10%"></div>
+        <div class="bg-zinc-900 border border-zinc-800 rounded-full h-2 overflow-hidden">
+            <div class="ct-bar bg-white h-full rounded-full transition-all duration-500" style="width:10%"></div>
         </div>
     `;
     taskList.prepend(card);
@@ -25,14 +29,14 @@ async function createSong() {
         const resp = await fetch('/api/make-song', {
             method:'POST',
             headers:{'Content-Type':'application/json'},
-            body: JSON.stringify({audio_id:state.audioId, title:state.title, lyrics:state.lyrics, style:state.style, mv:'v5.0'})
+            body: JSON.stringify({audio_id:state.audioId, title:state.title, lyrics:state.lyrics, style:state.style, mv:state.mv})
         });
         const data = await resp.json();
         if(data.data && data.data.song_ids) {
             const songIds = data.data.song_ids;
             const text = card.querySelector('.ct-text');
             const bar = card.querySelector('.ct-bar');
-            text.innerHTML = `<i class="fa-solid fa-layer-group mr-1"></i>2 versiyon oluşturuluyor...`;
+            // Keep song title, don't overwrite with version count
             bar.style.width = '20%';
             pollForTask(taskId, songIds);
         } else {
@@ -46,11 +50,21 @@ function taskError(card, msg) {
     const taskId = card.id;
     if(activeTasks[taskId]) { delete activeTasks[taskId]; saveActiveTasks(); }
     if(card) {
-        card.querySelector('.ct-text').innerHTML = `<i class="fa-solid fa-xmark mr-1 text-red-400"></i>${msg}`;
-        card.querySelector('.ct-bar').classList.remove('from-green-500','to-emerald-500');
-        card.querySelector('.ct-bar').classList.add('from-red-500','to-red-600');
+        card.querySelector('.ct-text').innerHTML = `<span class="text-red-500">${msg}</span>`;
+        card.querySelector('.ct-bar').className = "ct-bar bg-red-600 h-full rounded-full transition-all duration-500";
         card.querySelector('.ct-bar').style.width = '100%';
     }
+    
+    if (typeof showNotification === 'function') {
+        showNotification('İşlem Başarısız', msg, 'error');
+    }
+    
+    // Tüm kutuları sıfırla
+    if (document.getElementById('songTitle')) document.getElementById('songTitle').value = '';
+    if (document.getElementById('songLyrics')) document.getElementById('songLyrics').value = '';
+    if (document.getElementById('songStyle')) document.getElementById('songStyle').value = '';
+    if (document.getElementById('ytUrl')) document.getElementById('ytUrl').value = '';
+    if (typeof goToStep === 'function') goToStep(1);
 }
 async function pollForTask(taskId, songIds) {
     const card = document.getElementById(taskId);
@@ -59,6 +73,9 @@ async function pollForTask(taskId, songIds) {
     const text = card.querySelector('.ct-text');
     const ids = songIds.join(',');
     let elapsed = 0;
+    
+    // Smooth transition settings
+    if(bar) bar.style.transition = 'width 2s linear';
 
     while(elapsed < 300000) {
         if(!document.getElementById(taskId)) return;
@@ -75,19 +92,26 @@ async function pollForTask(taskId, songIds) {
             }
 
             const doneCount = songs.filter(s=>s.status===0).length;
-            bar.style.width = (20 + (doneCount/songs.length)*70)+'%';
-            text.innerHTML = `<i class="fa-solid fa-spinner fa-spin mr-1"></i>${doneCount}/${songs.length} tamamlandı (${Math.round(elapsed/1000)}s)`;
+            
+            // Calculate a fluid progress: Base (20%) + Per Done (35% each) + Time Crawl (up to 10%)
+            // This ensures it moves even when server hasn't finished a version
+            const base = 20 + (doneCount / songs.length) * 60;
+            const crawl = Math.min((elapsed / 120000) * 15, 15); // Add up to 15% crawl over 2 mins
+            const p = Math.min(base + crawl, 95);
+            
+            if(bar) bar.style.width = p + '%';
 
             if(allDone) {
                 const allReady = await checkCDNReady(songs);
                 if(!allReady) {
-                    bar.style.width = '95%';
-                    text.innerHTML = `<i class="fa-solid fa-hard-drive mr-1"></i>Dosyalar hazırlanıyor... (${Math.round(elapsed/1000)}s`;
+                    if(bar) bar.style.width = '98%';
                 } else {
-                    bar.style.width = '100%';
-                    bar.classList.remove('from-green-500','to-emerald-500');
-                    bar.classList.add('from-indigo-500','to-purple-500');
-                    text.innerHTML = '<i class="fa-solid fa-check mr-1 text-green-400"></i>Tamamlandı! ' + (songs[0]?.title || '');
+                    if(bar) {
+                        bar.style.transition = 'width 0.5s ease-out';
+                        bar.style.width = '100%';
+                        bar.className = "ct-bar bg-white h-full rounded-full transition-all duration-500";
+                    }
+                    text.innerHTML = '<span class="text-white">Tamamlandı!</span>';
                     loadAllSongs();
                     setTimeout(()=>showResults(songs), 500);
                     if(activeTasks[taskId]) { delete activeTasks[taskId]; saveActiveTasks(); }
@@ -95,12 +119,12 @@ async function pollForTask(taskId, songIds) {
                 }
             }
         } catch(e) {
-            text.innerHTML = `<i class="fa-solid fa-xmark mr-1 text-red-400"></i>${e.message}`;
+            text.innerHTML = `<span class="text-red-500">${e.message}</span>`;
         }
         await sleep(5000);
         elapsed += 5000;
     }
-    text.innerHTML = '<i class="fa-solid fa-clock mr-1 text-yellow-400"></i>Zaman aşımı';
+    text.innerHTML = '<span class="text-red-500 font-bold uppercase tracking-widest">Zaman aşımı</span>';
 }
 async function checkCDNReady(songs) {
     for(const song of songs) {

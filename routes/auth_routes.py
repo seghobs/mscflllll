@@ -110,6 +110,15 @@ def api_tokens_toggle(tok_id):
     return jsonify({"error": "Token bulunamadı"}), 404
 
 
+@auth_bp.route("/api/tokens/drision-sync", methods=["POST"])
+def api_tokens_drision_sync():
+    from core.account_manager import switch_to_next_account
+    new_token = switch_to_next_account()
+    if new_token:
+        return jsonify({"ok": True, "token": new_token})
+    return jsonify({"error": "Kredisi olan hesap bulunamadı veya bağlantı hatası."}), 400
+
+
 @auth_bp.route("/api/browser-token/start", methods=["POST"])
 def api_browser_token_start():
     if browser_token_state["status"] == "waiting":
@@ -135,3 +144,115 @@ def api_browser_token_cancel():
         if browser_instance.get("pw"): browser_instance["pw"].stop()
     except: pass
     return jsonify({"ok": True})
+
+# --- Bot Generation Endpoints ---
+
+import asyncio
+from core.bot_engine import state as bot_state, start_bot_task
+from core.config import ACCOUNTS_FILE
+import json
+import os
+
+def _bot_thread(count, pwd):
+    asyncio.run(start_bot_task(count, pwd))
+
+@auth_bp.route("/api/bot/start", methods=["POST"])
+def api_bot_start():
+    data = request.json
+    count = int(data.get("count", 1))
+    password = data.get("password", "Pass123!@")
+    
+    if bot_state.is_running:
+        return jsonify({"error": "Bot zaten calisiyor."}), 400
+        
+    threading.Thread(target=_bot_thread, args=(count, password), daemon=True).start()
+    return jsonify({"ok": True})
+
+@auth_bp.route("/api/bot/stop", methods=["POST"])
+def api_bot_stop():
+    bot_state.abort_requested = True
+    return jsonify({"ok": True})
+
+@auth_bp.route("/api/bot/status", methods=["GET"])
+def api_bot_status():
+    return jsonify({
+        "is_running": bot_state.is_running,
+        "progress": bot_state.progress,
+        "success": bot_state.success_count,
+        "total": bot_state.total,
+        "logs": bot_state.logs,
+        "current_parent": getattr(bot_state, "current_parent", "")
+    })
+
+@auth_bp.route("/api/accounts/list", methods=["GET"])
+def api_accounts_list():
+    if not os.path.exists(ACCOUNTS_FILE):
+        return jsonify({"accounts": []})
+    with open(ACCOUNTS_FILE, "r", encoding="utf-8") as f:
+        try:
+            data = json.load(f)
+            flat = []
+            for g, accs in data.items():
+                for a in accs:
+                    flat.append(a)
+            flat.sort(key=lambda x: float(x.get("credits", 0) or 0), reverse=True)
+            return jsonify({"accounts": flat})
+        except:
+            return jsonify({"accounts": []})
+
+@auth_bp.route("/api/accounts/switch-manual", methods=["POST"])
+def api_accounts_switch_manual():
+    data = request.json
+    email = data.get("email")
+    password = data.get("password")
+    
+    if not email or not password:
+        return jsonify({"error": "Eksik bilgi"}), 400
+        
+    from core.account_manager import MusicfulBot
+    bot = MusicfulBot()
+    
+    login_res = bot.login_api(email, password)
+    if login_res.get("code") == 200:
+        token = login_res.get("data", {}).get("token")
+        actual_credits = bot.get_credits(token)
+        
+        from core.config import TOKENS_FILE
+        import uuid
+        
+        tokens = []
+        if os.path.exists(TOKENS_FILE):
+            with open(TOKENS_FILE, "r", encoding="utf-8") as f:
+                tokens = json.load(f)
+                
+        for t in tokens:
+            t["active"] = False
+            
+        tokens.append({
+            "id": str(uuid.uuid4())[:8],
+            "name": email,
+            "token": token,
+            "active": True
+        })
+        
+        with open(TOKENS_FILE, "w", encoding="utf-8") as f:
+            json.dump(tokens, f, indent=2, ensure_ascii=False)
+            
+        if os.path.exists(ACCOUNTS_FILE):
+            with open(ACCOUNTS_FILE, "r", encoding="utf-8") as f:
+                acc_data = json.load(f)
+            updated = False
+            for c, accs in acc_data.items():
+                for a in accs:
+                    if a.get("email") == email:
+                        a["token"] = token
+                        if actual_credits is not None:
+                            a["credits"] = actual_credits
+                        updated = True
+            if updated:
+                with open(ACCOUNTS_FILE, "w", encoding="utf-8") as f:
+                    json.dump(acc_data, f, indent=4)
+                    
+        return jsonify({"ok": True, "credits": actual_credits})
+    
+    return jsonify({"error": "Login basarisiz."}), 400

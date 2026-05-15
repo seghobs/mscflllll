@@ -75,11 +75,14 @@ function fpBarUp(e) {
 
 /* ===== VOLUME ===== */
 function fpVolume(val) {
+    localStorage.setItem('global_volume', val);
     if(fpAudio) fpAudio.volume = val;
     const icon = document.getElementById('fpVolIcon');
-    if(val == 0) icon.className = 'fa-solid fa-volume-xmark fp-vol-icon';
-    else if(val < 0.5) icon.className = 'fa-solid fa-volume-low fp-vol-icon';
-    else icon.className = 'fa-solid fa-volume-high fp-vol-icon';
+    if (icon) {
+        if(val == 0) icon.className = 'fa-solid fa-volume-xmark fp-vol-icon';
+        else if(val < 0.5) icon.className = 'fa-solid fa-volume-low fp-vol-icon';
+        else icon.className = 'fa-solid fa-volume-high fp-vol-icon';
+    }
 }
 
 function fpMute() {
@@ -104,6 +107,10 @@ function fpClose() {
     document.getElementById('footerPlayer').classList.remove('active');
     document.body.classList.remove('footer-open');
     document.getElementById('fpArt').classList.remove('playing');
+    
+    if (typeof resetLibraryPlayButtons === 'function') {
+        resetLibraryPlayButtons();
+    }
 }
 
 function stopYtPlayer() { fpClose(); }
@@ -115,6 +122,21 @@ function playSong(src, title) {
     fpAudio.preload = 'auto';
     fpAudio.src = src;
     fpCurrentId = src;
+    
+    // Ses düzeyini localStorage'dan yükle
+    let savedVol = localStorage.getItem('global_volume');
+    if (savedVol !== null) {
+        fpAudio.volume = parseFloat(savedVol);
+        const slider = document.getElementById('fpVolSlider');
+        if(slider) slider.value = savedVol;
+        
+        const icon = document.getElementById('fpVolIcon');
+        if(icon) {
+            if(savedVol == 0) icon.className = 'fa-solid fa-volume-xmark fp-vol-icon';
+            else if(savedVol < 0.5) icon.className = 'fa-solid fa-volume-low fp-vol-icon';
+            else icon.className = 'fa-solid fa-volume-high fp-vol-icon';
+        }
+    }
 
     const titleEl = document.getElementById('fpTitle');
     if(titleEl) titleEl.textContent = title || 'Şarkı';
@@ -189,7 +211,7 @@ function fpBind() {
 function fpToggle() {
     if(!fpAudio) return;
     if(fpAudio.paused) {
-        fpAudio.play();
+        fpAudio.play().catch(e => console.warn('Oynatma hatası:', e));
     } else {
         fpAudio.pause();
     }
@@ -197,6 +219,13 @@ function fpToggle() {
 
 function createPlayer(id, src, theme) {
     const cls = theme === 'dark' ? 'cp-wrap dark' : 'cp-wrap';
+    let savedVol = localStorage.getItem('global_volume');
+    if(savedVol === null) savedVol = 1;
+    
+    let iconCls = 'fa-solid fa-volume-high';
+    if(savedVol == 0) iconCls = 'fa-solid fa-volume-xmark';
+    else if(savedVol < 0.5) iconCls = 'fa-solid fa-volume-low';
+
     return `
         <div class="${cls}" id="cp-${id}">
             <button class="cp-btn" onclick="cpToggle('${id}')">
@@ -212,10 +241,10 @@ function createPlayer(id, src, theme) {
                 </div>
             </div>
             <div class="cp-vol">
-                <i class="fa-solid fa-volume-high cp-vol-icon" id="cp-volicon-${id}" onclick="cpMute('${id}')"></i>
-                <input type="range" class="cp-vol-slider" min="0" max="1" step="0.05" value="1" oninput="cpVolume('${id}',this.value)">
+                <i class="${iconCls} cp-vol-icon" id="cp-volicon-${id}" onclick="cpMute('${id}')"></i>
+                <input type="range" class="cp-vol-slider" min="0" max="1" step="0.05" value="${savedVol}" oninput="cpVolume('${id}',this.value)">
             </div>
-            <audio id="cp-audio-${id}" preload="none"><source src="${src}" type="audio/mpeg"></audio>
+            <audio id="cp-audio-${id}" src="${src}" preload="none"></audio>
         </div>
     `;
 }
@@ -224,6 +253,10 @@ function cpBind(id) {
     const audio = document.getElementById('cp-audio-'+id);
     if(!audio || audio._cpBound) return;
     audio._cpBound = true;
+    
+    let savedVol = localStorage.getItem('global_volume');
+    if(savedVol !== null) audio.volume = parseFloat(savedVol);
+    
     const bar = document.getElementById('cp-bar-'+id);
     const cur = document.getElementById('cp-cur-'+id);
     const dur = document.getElementById('cp-dur-'+id);
@@ -249,7 +282,7 @@ function cpToggle(id) {
     cpBind(id);
     if(audio.paused) {
         document.querySelectorAll('audio[id^="cp-audio-"]').forEach(a => { if(a!==audio && !a.paused) a.pause(); });
-        audio.play();
+        audio.play().catch(e => console.warn('Oynatma hatası:', e));
     } else {
         audio.pause();
     }
@@ -265,6 +298,7 @@ function cpSeek(e, id) {
 }
 
 function cpVolume(id, val) {
+    localStorage.setItem('global_volume', val);
     const audio = document.getElementById('cp-audio-'+id);
     if(audio) audio.volume = val;
     const icon = document.getElementById('cp-volicon-'+id);

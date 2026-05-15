@@ -1,9 +1,269 @@
 function openSettings() {
-    document.getElementById('settingsModal').classList.remove('hidden');
+    const modal = document.getElementById('settingsModal');
+    modal.classList.remove('hidden');
+    
+    const card = modal.querySelector('.modal-card');
+    modal.style.opacity = '0';
+    modal.style.transition = 'opacity 0.3s ease';
+    if(card) {
+        card.style.transform = 'scale(0.95) translateY(10px)';
+        card.style.opacity = '0';
+        card.style.transition = 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+    }
+    
+    setTimeout(() => {
+        modal.style.opacity = '1';
+        if(card) {
+            card.style.transform = 'scale(1) translateY(0)';
+            card.style.opacity = '1';
+        }
+    }, 10);
+    
     loadTokens();
-    checkBrowserTokenStatus();
+    loadAllAccountsList();
+    if(!window.botPollInterval) window.botPollInterval = setInterval(pollBotStatus, 2000);
 }
-function closeSettings() { document.getElementById('settingsModal').classList.add('hidden'); }
+
+function closeSettings() { 
+    const modal = document.getElementById('settingsModal');
+    const card = modal.querySelector('.modal-card');
+    
+    modal.style.opacity = '0';
+    if(card) {
+        card.style.transform = 'scale(0.95) translateY(10px)';
+        card.style.opacity = '0';
+    }
+    
+    setTimeout(() => {
+        modal.classList.add('hidden');
+    }, 300);
+}
+
+function switchTab(tabName) {
+    const tabs = ['Tokens', 'Accounts', 'Bot'];
+    
+    tabs.forEach(t => {
+        const view = document.getElementById('view' + t);
+        if (view) view.classList.add('hidden');
+        const btn = document.getElementById('tab' + t);
+        if (btn) btn.className = 'flex-1 py-2 text-xs font-bold bg-zinc-900 text-zinc-500 rounded transition';
+    });
+
+    const activeView = document.getElementById('view' + tabName.charAt(0).toUpperCase() + tabName.slice(1));
+    const activeTab = document.getElementById('tab' + tabName.charAt(0).toUpperCase() + tabName.slice(1));
+    
+    if (activeView) {
+        activeView.classList.remove('hidden');
+        activeView.style.opacity = '0';
+        activeView.style.transform = 'translateX(10px)';
+        activeView.style.transition = 'all 0.3s ease';
+        
+        setTimeout(() => {
+            activeView.style.opacity = '1';
+            activeView.style.transform = 'translateX(0)';
+        }, 10);
+    }
+    
+    if (activeTab) {
+        activeTab.className = 'flex-1 py-2 text-xs font-bold bg-zinc-800 text-white rounded shadow-lg transition';
+    }
+}
+
+let allAccountsData = [];
+
+async function loadAllAccountsList() {
+    try {
+        const resp = await fetch('/api/accounts/list');
+        const data = await resp.json();
+        allAccountsData = data.accounts || [];
+        applyAccountSort();
+    } catch(e) {}
+}
+
+function applyAccountSort() {
+    const container = document.getElementById('accountsList');
+    if (!container) return;
+    
+    const sortType = document.getElementById('accountsSort') ? document.getElementById('accountsSort').value : 'credits_desc';
+    
+    let sorted = [...allAccountsData];
+    
+    if(sortType === 'credits_desc') {
+        sorted.sort((a, b) => parseFloat(b.credits || 0) - parseFloat(a.credits || 0));
+    } else if(sortType === 'credits_asc') {
+        sorted.sort((a, b) => parseFloat(a.credits || 0) - parseFloat(b.credits || 0));
+    } else if(sortType === 'newest') {
+        sorted.sort((a, b) => new Date(b.timestamp || 0) - new Date(a.timestamp || 0));
+    } else if(sortType === 'oldest') {
+        sorted.sort((a, b) => new Date(a.timestamp || 0) - new Date(b.timestamp || 0));
+    }
+
+    container.innerHTML = '';
+    sorted.forEach(a => {
+        container.innerHTML += `
+            <div ondblclick="manualAccountSwitch('${a.email}', '${a.password}')" class="bg-zinc-900 rounded-lg p-3 border border-zinc-800 flex justify-between items-center cursor-pointer hover:bg-zinc-800 transition group select-none">
+                <div>
+                    <div class="text-xs font-bold text-white group-hover:text-emerald-400 transition">${a.email}</div>
+                    <div class="text-[10px] text-zinc-500 font-mono">${a.password}</div>
+                </div>
+                <div class="text-right">
+                    <div class="text-xs font-black text-emerald-400">${a.credits || 0} Kredi</div>
+                    <div class="text-[9px] text-zinc-600">${a.timestamp || '-'}</div>
+                </div>
+            </div>
+        `;
+    });
+}
+
+let isSwitching = false;
+async function manualAccountSwitch(email, password) {
+    if(isSwitching) return;
+    
+    const overlay = document.createElement('div');
+    overlay.className = 'fixed inset-0 bg-black/80 backdrop-blur-sm z-[9999] flex flex-col items-center justify-center';
+    overlay.innerHTML = `
+        <div class="w-16 h-16 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin mb-6"></div>
+        <div class="text-xl font-black text-white mb-2">Hesap Değiştiriliyor</div>
+        <div class="text-sm font-bold text-zinc-400">${email}</div>
+        <div class="text-[10px] text-zinc-500 mt-1 uppercase tracking-widest">Lütfen bekleyin, şifre ile yeni token alınıyor...</div>
+    `;
+    document.body.appendChild(overlay);
+    isSwitching = true;
+    
+    try {
+        const r = await fetch('/api/accounts/switch-manual', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({email, password})
+        });
+        const d = await r.json();
+        
+        if(d.ok) {
+            overlay.innerHTML = `
+                <div class="w-16 h-16 bg-emerald-500 rounded-full flex items-center justify-center mb-6">
+                    <i class="fa-solid fa-check text-2xl text-black"></i>
+                </div>
+                <div class="text-xl font-black text-white mb-2">Geçiş Başarılı!</div>
+                <div class="text-sm font-bold text-emerald-400">Güncel Kredi: ${d.credits}</div>
+            `;
+            setTimeout(() => {
+                overlay.remove();
+                isSwitching = false;
+                loadTokens();
+                loadAllAccountsList();
+                switchTab('tokens');
+                
+                // Ana sayfa kredi barini ve sarki listesini animasyonlu guncelle
+                if (typeof loadRights === 'function') {
+                    const rightsBar = document.getElementById('rights-bar');
+                    if(rightsBar) {
+                        rightsBar.style.opacity = '0';
+                        rightsBar.style.transform = 'translateY(-10px)';
+                        rightsBar.style.transition = 'all 0.4s ease';
+                        setTimeout(() => {
+                            loadRights();
+                            rightsBar.style.opacity = '1';
+                            rightsBar.style.transform = 'translateY(0)';
+                        }, 400);
+                    } else {
+                        loadRights();
+                    }
+                }
+                
+                if (typeof loadAllSongs === 'function') {
+                    const songsContainer = document.getElementById('allSongsContainer');
+                    if(songsContainer) {
+                        songsContainer.style.opacity = '0';
+                        songsContainer.style.transition = 'opacity 0.3s ease';
+                        setTimeout(() => {
+                            loadAllSongs();
+                            songsContainer.style.opacity = '1';
+                        }, 300);
+                    } else {
+                        loadAllSongs();
+                    }
+                }
+                
+            }, 1500);
+        } else {
+            overlay.innerHTML = `
+                <div class="w-16 h-16 bg-red-500 rounded-full flex items-center justify-center mb-6">
+                    <i class="fa-solid fa-xmark text-2xl text-white"></i>
+                </div>
+                <div class="text-xl font-black text-white mb-2">Geçiş Başarısız</div>
+                <div class="text-sm font-bold text-red-400">${d.error}</div>
+            `;
+            setTimeout(() => {
+                overlay.remove();
+                isSwitching = false;
+            }, 2000);
+        }
+    } catch (e) {
+        overlay.remove();
+        isSwitching = false;
+        alert(e.message);
+    }
+}
+
+async function startBot() {
+    const count = document.getElementById('botCount').value;
+    const pwd = document.getElementById('botPassword').value;
+    try {
+        await fetch('/api/bot/start', {
+            method: 'POST',
+            headers: {'Content-Type':'application/json'},
+            body: JSON.stringify({count, password: pwd})
+        });
+        document.getElementById('btnStartBot').classList.add('hidden');
+        document.getElementById('btnStopBot').classList.remove('hidden');
+        document.getElementById('botProgress').classList.remove('hidden');
+    } catch(e) { alert(e.message); }
+}
+
+async function stopBot() {
+    await fetch('/api/bot/stop', {method: 'POST'});
+}
+
+async function pollBotStatus() {
+    try {
+        const r = await fetch('/api/bot/status');
+        const d = await r.json();
+        
+        if(d.is_running) {
+            document.getElementById('btnStartBot').classList.add('hidden');
+            document.getElementById('btnStopBot').classList.remove('hidden');
+            document.getElementById('botProgress').classList.remove('hidden');
+            document.getElementById('botParentInfo').classList.remove('hidden');
+            document.getElementById('botStatusBadge').className = 'bg-emerald-900/50 text-emerald-400 text-[10px] px-2 py-1 rounded font-bold uppercase';
+            document.getElementById('botStatusBadge').innerText = 'Çalışıyor';
+            
+            if (d.current_parent && d.current_parent !== "UNKNOWN" && d.current_parent !== "") {
+                document.getElementById('botParentEmailText').innerText = d.current_parent;
+            } else if (d.current_parent === "UNKNOWN") {
+                document.getElementById('botParentEmailText').innerText = "Boşta (Ana Hesap)";
+            } else {
+                document.getElementById('botParentEmailText').innerText = "Aranıyor...";
+            }
+        } else {
+            document.getElementById('btnStartBot').classList.remove('hidden');
+            document.getElementById('btnStopBot').classList.add('hidden');
+            if (document.getElementById('botParentInfo')) document.getElementById('botParentInfo').classList.add('hidden');
+            document.getElementById('botStatusBadge').className = 'bg-zinc-800 text-zinc-400 text-[10px] px-2 py-1 rounded font-bold uppercase';
+            document.getElementById('botStatusBadge').innerText = 'Beklemede';
+        }
+
+        if(d.total > 0) {
+            document.getElementById('botProgressText').innerText = d.success + ' / ' + d.total;
+            document.getElementById('botProgressPercent').innerText = d.progress + '%';
+            document.getElementById('botProgressBar').style.width = d.progress + '%';
+        }
+
+        const cons = document.getElementById('botConsole');
+        cons.innerHTML = d.logs.join('<br>');
+        cons.scrollTop = cons.scrollHeight;
+
+    } catch(e) {}
+}
 
 async function startBrowserToken() {
     try {
@@ -41,6 +301,29 @@ async function pollBrowserToken() {
         }
     } catch(e) {}
 }
+
+async function syncDrisionToken() {
+    const btn = document.getElementById('drisionSyncBtn');
+    const origHtml = btn.innerHTML;
+    btn.innerHTML = '<div class="w-full flex items-center justify-center py-2"><i class="fa-solid fa-spinner fa-spin text-emerald-400"></i><span class="ml-3 text-sm font-bold text-emerald-400">Hesap aranıyor ve bağlanılıyor...</span></div>';
+    btn.disabled = true;
+    try {
+        const resp = await fetch('/api/tokens/drision-sync', {method:'POST'});
+        const data = await resp.json();
+        if(data.error) {
+            alert('Hata: ' + data.error);
+        } else {
+            alert('Yeni hesaba geçildi ve token başarıyla alındı!');
+            loadTokens();
+            if(typeof loadRights === 'function') loadRights();
+        }
+    } catch(e) {
+        alert('Bağlantı hatası: ' + e.message);
+    }
+    btn.innerHTML = origHtml;
+    btn.disabled = false;
+}
+
 async function cancelBrowserToken() {
     await fetch('/api/browser-token/cancel', {method:'POST'});
     if(browserPollInterval) { clearInterval(browserPollInterval); browserPollInterval = null; }
@@ -73,31 +356,30 @@ async function loadTokens() {
             return;
         }
         container.innerHTML = '';
+        
+        // Aktif olani en uste getirme siralama
+        data.tokens.sort((a, b) => (b.active === true ? 1 : 0) - (a.active === true ? 1 : 0));
+        
         data.tokens.forEach((t) => {
             const isActive = t.active !== false;
-            const masked = t.token.substring(0,10) + '•••' + t.token.substring(t.token.length-8);
             container.innerHTML += `
-                <div class="bg-dark-800/60 rounded-xl p-3 border ${isActive ? 'border-green-500/40' : 'border-dark-700/50 opacity-60'} transition">
-                    <div class="flex items-center gap-3">
-                        <div class="w-8 h-8 ${isActive ? 'bg-green-500/20' : 'bg-dark-700'} rounded-lg flex items-center justify-center flex-shrink-0">
-                            <i class="fa-solid ${isActive ? 'fa-check text-green-400' : 'fa-pause text-dark-500'} text-xs"></i>
+                <div class="bg-zinc-900/50 rounded-xl p-4 border ${isActive ? 'border-white shadow-[0_0_15px_rgba(255,255,255,0.05)]' : 'border-zinc-800 opacity-50'} transition">
+                    <div class="flex items-center gap-4">
+                        <div class="w-10 h-10 ${isActive ? 'bg-zinc-800 border-zinc-500' : 'bg-zinc-950 border-zinc-700'} border rounded-lg flex items-center justify-center flex-shrink-0">
+                            <i class="fa-solid ${isActive ? 'fa-check text-white' : 'fa-pause text-zinc-600'} text-xs"></i>
                         </div>
                         <div class="flex-1 min-w-0">
-                            <div class="text-sm font-medium flex items-center gap-2">
+                            <div class="text-sm font-bold tracking-tight flex items-center gap-2">
                                 ${t.name}
-                                ${isActive ? '<span class="bg-green-500/20 text-green-400 text-[10px] px-1.5 py-0.5 rounded-full">Aktif</span>' : '<span class="bg-dark-700 text-dark-500 text-[10px] px-1.5 py-0.5 rounded-full">Pasif</span>'}
+                                ${isActive ? '<span class="bg-white text-black text-[9px] px-1.5 py-0.5 rounded-sm font-bold uppercase tracking-widest">Aktif</span>' : '<span class="bg-zinc-800 text-zinc-500 text-[9px] px-1.5 py-0.5 rounded-sm font-bold uppercase tracking-widest">Pasif</span>'}
                             </div>
-                            <div class="text-xs text-dark-500 font-mono truncate">${masked}</div>
                         </div>
-                        <div class="flex gap-1 flex-shrink-0">
-                            <button onclick="toggleToken('${t.id}')" class="w-7 h-7 rounded-lg ${isActive ? 'bg-green-500/10 hover:bg-green-500/20' : 'bg-dark-700 hover:bg-green-500/20'} flex items-center justify-center transition" title="${isActive ? 'Pasif Yap' : 'Aktif Yap'}">
-                                <i class="fa-solid fa-power-off text-xs ${isActive ? 'text-green-400' : 'text-dark-500 hover:text-green-400'}"></i>
+                        <div class="flex gap-2 flex-shrink-0">
+                            <button onclick="toggleToken('${t.id}')" class="w-9 h-9 rounded-lg border border-zinc-800 bg-zinc-900 hover:bg-zinc-800 flex items-center justify-center transition" title="${isActive ? 'Pasif Yap' : 'Aktif Yap'}">
+                                <i class="fa-solid fa-power-off text-xs ${isActive ? 'text-white' : 'text-zinc-600'}"></i>
                             </button>
-                            <button onclick="openEditModal('${t.id}')" class="w-7 h-7 rounded-lg bg-dark-700 hover:bg-indigo-500/20 flex items-center justify-center transition" title="Düzenle">
-                                <i class="fa-solid fa-pen text-xs text-dark-400 hover:text-indigo-400"></i>
-                            </button>
-                            <button onclick="deleteToken('${t.id}')" class="w-7 h-7 rounded-lg bg-dark-700 hover:bg-red-500/20 flex items-center justify-center transition" title="Sil">
-                                <i class="fa-solid fa-trash text-xs text-dark-400 hover:text-red-400"></i>
+                            <button onclick="deleteToken('${t.id}')" class="w-9 h-9 rounded-lg border border-zinc-800 bg-zinc-900 hover:bg-red-900/20 flex items-center justify-center transition" title="Sil">
+                                <i class="fa-solid fa-trash text-xs text-zinc-500 hover:text-red-500"></i>
                             </button>
                         </div>
                     </div>

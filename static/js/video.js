@@ -69,7 +69,7 @@ function setupImgDrop() {
     const dz = document.getElementById('imgDropzone');
     const fi = document.getElementById('imgInput');
     dz.onclick = () => fi.click();
-    dz.ondragover = (e) => { e.preventDefault(); dz.style.borderColor='rgba(99,102,241,.5)'; };
+    dz.ondragover = (e) => { e.preventDefault(); dz.style.borderColor='white'; };
     dz.ondragleave = () => { dz.style.borderColor=''; };
     dz.ondrop = (e) => { e.preventDefault(); dz.style.borderColor=''; if(e.dataTransfer.files.length) handleImg(e.dataTransfer.files[0]); };
     fi.onchange = () => { if(fi.files.length) handleImg(fi.files[0]); };
@@ -126,7 +126,7 @@ async function confirmCoverGenerate() {
     const loading = document.getElementById('aiGenerating');
     btn.disabled = true;
     btn.classList.add('opacity-50');
-    loading.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i><span>Görsel üretiliyor... (2dk max)</span>';
+    loading.innerHTML = '<div class="flex items-center justify-center gap-3 py-4"><i class="fa-solid fa-spinner fa-spin text-zinc-500"></i><span class="text-[10px] font-bold uppercase tracking-widest text-zinc-500">Görsel üretiliyor... (2dk max)</span></div>';
     loading.classList.remove('hidden');
     document.getElementById('imgPreviewWrapper').classList.add('hidden');
     document.getElementById('imgInfo').classList.add('hidden');
@@ -183,15 +183,13 @@ async function confirmCoverGenerate() {
 }
 function showCoverRetry(msg, title, lyrics) {
     const loading = document.getElementById('aiGenerating');
-    const safeTitle = (title||'').replace(/'/g,"\'");
-    const safeLyrics = (lyrics||'').replace(/'/g,"\'").substring(0,200);
     loading.innerHTML = `
-        <div class="text-center">
-            <i class="fa-solid fa-xmark text-red-400 text-lg mb-2"></i>
-            <div class="text-xs text-red-400 mb-2">${msg}</div>
+        <div class="text-center p-6 bg-zinc-950 border border-zinc-900 rounded-lg">
+            <i class="fa-solid fa-triangle-exclamation text-red-500 text-xl mb-3"></i>
+            <div class="text-[10px] font-bold uppercase tracking-widest text-red-500 mb-4">${msg}</div>
             <button onclick="generateAiCover()"
-                class="bg-amber-600 hover:bg-amber-500 px-4 py-2 rounded-lg text-xs font-semibold text-white transition-all">
-                <i class="fa-solid fa-rotate-right mr-1"></i> Tekrar Dene
+                class="shadcn-button-primary px-6 py-2 text-[10px] flex items-center gap-2 mx-auto">
+                <i class="fa-solid fa-rotate-right"></i> Tekrar Dene
             </button>
         </div>`;
 }

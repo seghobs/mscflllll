@@ -12,8 +12,25 @@ try:
     import youtube_upload
 except ImportError:
     youtube_upload = None
-
+    
 youtube_bp = Blueprint('youtube_bp', __name__)
+
+@youtube_bp.route("/api/yt-info")
+def api_yt_info():
+    url = request.args.get("url", "").strip()
+    if not url:
+        return jsonify({"error": "URL boş"}), 400
+    try:
+        ydl_opts = {"quiet": True, "no_warnings": True, "extract_flat": True}
+        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+            info = ydl.extract_info(url, download=False)
+        return jsonify({
+            "title": info.get("title", "Bilinmeyen Video"),
+            "thumbnail": info.get("thumbnail", ""),
+            "id": info.get("id", "")
+        })
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 @youtube_bp.route("/api/yt-search")
 def api_yt_search():

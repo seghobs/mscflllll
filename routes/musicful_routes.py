@@ -33,9 +33,22 @@ def api_upload():
     headers = get_headers(token)
     del headers["accept"]
 
-    files = {"audio": (file.filename, file.read(), "audio/mpeg")}
+    file_bytes = file.read()
+    files = {"audio": (file.filename, file_bytes, "audio/mpeg")}
     resp = requests.post(url, headers=headers, files=files)
-    return jsonify(resp.json())
+    resp_data = resp.json()
+
+    if resp_data.get("code") != 200 and resp_data.get("status") != 200:
+        from core.account_manager import switch_to_next_account
+        new_token = switch_to_next_account()
+        if new_token:
+            headers = get_headers(new_token)
+            del headers["accept"]
+            files2 = {"audio": (file.filename, file_bytes, "audio/mpeg")}
+            resp = requests.post(url, headers=headers, files=files2)
+            resp_data = resp.json()
+
+    return jsonify(resp_data)
 
 @musicful_bp.route("/api/content-check", methods=["POST"])
 def api_content_check():
@@ -79,7 +92,33 @@ def api_make_song():
         "is_pro": (None, "true"),
     }
     resp = requests.post(url, headers=headers, files=form)
-    return jsonify(resp.json())
+    resp_data = resp.json()
+
+    if resp_data.get("code") != 200 and resp_data.get("status") != 200:
+        from core.account_manager import switch_to_next_account
+        new_token = switch_to_next_account()
+        if new_token:
+            headers = get_headers(new_token)
+            del headers["accept"]
+            form2 = {
+                "mv": (None, mv),
+                "grade": (None, "2"),
+                "area": (None, "TR"),
+                "lyrics": (None, lyrics),
+                "isAiLyrics": (None, "false"),
+                "persona_id": (None, ""),
+                "style": (None, style),
+                "title": (None, title),
+                "instrumental": (None, "0"),
+                "model": (None, mv),
+                "audio_id": (None, audio_id),
+                "action": (None, "cover"),
+                "is_pro": (None, "true"),
+            }
+            resp = requests.post(url, headers=headers, files=form2)
+            resp_data = resp.json()
+
+    return jsonify(resp_data)
 
 @musicful_bp.route("/api/poll/<task_ids>")
 def api_poll(task_ids):
