@@ -68,9 +68,14 @@ async function loadAllSongs(isNextPage = false) {
 
             let actions = '';
             if (isReady) {
+                const isPlayingThis = (fpAudio && !fpAudio.paused && fpCurrentId && fpCurrentId.includes(songUuid));
+                const btnContent = isPlayingThis 
+                    ? `<i class="fa-solid fa-headphones fa-beat text-[10px] text-emerald-400"></i> Dinleniyor..` 
+                    : `<i class="fa-solid fa-play text-[10px]"></i> Dinle`;
+                    
                 actions = `
                     <button onclick="togglePlay('${songUuid}',this)" class="shadcn-button-secondary px-3 py-1.5 text-xs flex items-center gap-2">
-                        <i class="fa-solid fa-play text-[10px]"></i> Dinle
+                        ${btnContent}
                     </button>
                     <a href="${url}" download class="shadcn-button-secondary px-3 py-1.5 text-xs flex items-center gap-2">
                         <i class="fa-solid fa-download text-[10px]"></i> İndir

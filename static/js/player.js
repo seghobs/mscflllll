@@ -423,10 +423,22 @@ function restorePlayerState() {
                     fpAudio.play().then(() => {
                         updateLibraryPlayButtons(fpCurrentId);
                     }).catch(err => {
-                        console.log("Autoplay blocked by browser policy. Loaded paused at position.");
+                        console.log("Autoplay blocked by browser policy. Adding one-time interaction handler to resume.");
                         const icon = document.getElementById('fpPlayIcon');
                         if (icon) icon.className = 'fa-solid fa-play';
                         document.getElementById('fpArt')?.classList.remove('playing');
+                        
+                        const resumeAudio = () => {
+                            if (fpAudio && fpAudio.paused) {
+                                fpAudio.play().then(() => {
+                                    updateLibraryPlayButtons(fpCurrentId);
+                                }).catch(e => console.warn("Failed to resume on click:", e));
+                            }
+                            document.removeEventListener('click', resumeAudio);
+                            document.removeEventListener('keydown', resumeAudio);
+                        };
+                        document.addEventListener('click', resumeAudio);
+                        document.addEventListener('keydown', resumeAudio);
                     });
                 } else {
                     const icon = document.getElementById('fpPlayIcon');
