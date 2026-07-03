@@ -35,29 +35,73 @@ function showResults(songs) {
         `;
     });
 }
-async function loadAllSongs() {
+let libraryPage = 1;
+let libraryLoading = false;
+let libraryHasMore = true;
+const libraryLimit = 20;
+
+async function loadAllSongs(isNextPage = false) {
+    if (libraryLoading) return;
+    if (isNextPage && !libraryHasMore) return;
+
+    libraryLoading = true;
+    
+    if (!isNextPage) {
+        libraryPage = 1;
+        libraryHasMore = true;
+    }
+
     const container = document.getElementById('allSongsContainer');
-    container.innerHTML = '<div class="flex items-center justify-center py-12"><i class="fa-solid fa-spinner fa-spin text-zinc-500 mr-3"></i><span class="text-zinc-500 text-xs font-bold uppercase tracking-widest">Yükleniyor...</span></div>';
+    
+    let loadingSpinner = document.getElementById('libraryLoadingSpinner');
+    if (!isNextPage) {
+        container.innerHTML = '<div class="flex items-center justify-center py-12"><i class="fa-solid fa-spinner fa-spin text-zinc-500 mr-3"></i><span class="text-zinc-500 text-xs font-bold uppercase tracking-widest">Yükleniyor...</span></div>';
+    } else {
+        if (!loadingSpinner) {
+            loadingSpinner = document.createElement('div');
+            loadingSpinner.id = 'libraryLoadingSpinner';
+            loadingSpinner.className = 'flex items-center justify-center py-4';
+            loadingSpinner.innerHTML = '<i class="fa-solid fa-spinner fa-spin text-zinc-500 mr-3"></i><span class="text-zinc-500 text-[10px] font-bold uppercase tracking-widest">Daha Fazla Yükleniyor...</span>';
+            container.appendChild(loadingSpinner);
+        }
+    }
 
     try {
-        const resp = await fetch('/api/songs?limit=20');
+        const resp = await fetch(`/api/songs?page=${libraryPage}&limit=${libraryLimit}`);
         const data = await resp.json();
-        const songs = data.data.list;
-        if(!songs.length) {
-            container.innerHTML = '<div class="text-center py-12 border-2 border-dashed border-zinc-900 rounded-lg"><i class="fa-regular fa-folder-open text-2xl text-zinc-700 mb-3"></i><p class="text-zinc-500 text-[10px] font-bold uppercase tracking-widest">Kütüphane Boş</p></div>';
+        const songs = data.data.list || [];
+        
+        if (loadingSpinner) {
+            loadingSpinner.remove();
+        }
+
+        if (!isNextPage) {
+            container.innerHTML = '';
+        }
+
+        if (!songs.length) {
+            if (!isNextPage) {
+                container.innerHTML = '<div class="text-center py-12 border-2 border-dashed border-zinc-900 rounded-lg"><i class="fa-regular fa-folder-open text-2xl text-zinc-700 mb-3"></i><p class="text-zinc-500 text-[10px] font-bold uppercase tracking-widest">Kütüphane Boş</p></div>';
+            }
+            libraryHasMore = false;
+            libraryLoading = false;
             return;
         }
-        container.innerHTML = '';
-        songs.forEach((song,idx) => {
+
+        if (songs.length < libraryLimit) {
+            libraryHasMore = false;
+        }
+
+        songs.forEach((song, idx) => {
             knownSongs[song.song_id] = song;
-            const dur = song.duration>0 ? `${Math.round(song.duration/1000)}s` : 'İşleniyor...';
-            const isReady = song.audio_url && song.duration>0;
+            const dur = song.duration > 0 ? `${Math.round(song.duration / 1000)}s` : 'İşleniyor...';
+            const isReady = song.audio_url && song.duration > 0;
             const songUuid = song.song_id;
             const url = `/api/download/${songUuid}`;
             const badge = song.is_cover ? '<span class="bg-zinc-900 border border-zinc-800 text-zinc-400 text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-md">Cover</span>' : song.is_upload ? '<span class="bg-zinc-900 border border-zinc-800 text-zinc-400 text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-md">Yüklendi</span>' : '';
 
             let actions = '';
-            if(isReady) {
+            if (isReady) {
                 actions = `
                     <button onclick="togglePlay('${songUuid}',this)" class="shadcn-button-secondary px-3 py-1.5 text-xs flex items-center gap-2">
                         <i class="fa-solid fa-play text-[10px]"></i> Dinle
@@ -70,8 +114,10 @@ async function loadAllSongs() {
                 actions = `<span class="text-zinc-500 text-[10px] font-bold uppercase tracking-widest flex items-center gap-2"><i class="fa-solid fa-spinner fa-spin"></i> Hazırlanıyor</span>`;
             }
 
+            const animDelay = isNextPage ? 0 : idx * 0.05;
+
             container.innerHTML += `
-                <div class="shadcn-card p-4 mb-2 fade-in" data-sid="${songUuid}" data-title="${(song.title||'Adsız').replace(/"/g,'&quot;')}" data-dur="${song.duration||0}" data-ready="${isReady}" style="animation-delay:${idx*0.05}s">
+                <div class="shadcn-card p-4 mb-2 fade-in" data-sid="${songUuid}" data-title="${(song.title || 'Adsız').replace(/"/g, '&quot;')}" data-dur="${song.duration || 0}" data-ready="${isReady}" style="animation-delay:${animDelay}s">
                     <div class="flex justify-between items-center">
                         <div class="flex-1 min-w-0 mr-4">
                             <div class="flex items-center gap-3 mb-1.5">
@@ -81,15 +127,24 @@ async function loadAllSongs() {
                             <div class="text-[10px] font-bold uppercase tracking-widest text-zinc-500 flex items-center gap-3">
                                 <i class="fa-regular fa-clock"></i> ${dur}
                             </div>
-                            ${song.lyrics ? `<details class="mt-3"><summary class="text-[10px] font-bold uppercase tracking-widest text-zinc-600 cursor-pointer hover:text-zinc-400 transition"><i class="fa-solid fa-chevron-right mr-1.5"></i>Sözler</summary><pre class="text-[10px] text-zinc-500 mt-2 whitespace-pre-wrap max-h-28 overflow-y-auto bg-zinc-950 border border-zinc-900 rounded-md p-3 leading-relaxed">${song.lyrics.substring(0,400)}</pre></details>` : ''}
+                            ${song.lyrics ? `<details class="mt-3"><summary class="text-[10px] font-bold uppercase tracking-widest text-zinc-600 cursor-pointer hover:text-zinc-400 transition"><i class="fa-solid fa-chevron-right mr-1.5"></i>Sözler</summary><pre class="text-[10px] text-zinc-500 mt-2 whitespace-pre-wrap max-h-28 overflow-y-auto bg-zinc-950 border border-zinc-900 rounded-md p-3 leading-relaxed">${song.lyrics.substring(0, 400)}</pre></details>` : ''}
                         </div>
                         <div class="flex gap-2 flex-shrink-0">${actions}</div>
                     </div>
                 </div>
             `;
         });
-    } catch(e) {
-        container.innerHTML = `<div class="text-center py-12"><i class="fa-solid fa-triangle-exclamation text-2xl text-red-500 mb-3"></i><p class="text-red-500 text-xs font-bold uppercase tracking-widest">${e.message}</p></div>`;
+
+        libraryPage++;
+    } catch (e) {
+        if (loadingSpinner) loadingSpinner.remove();
+        if (!isNextPage) {
+            container.innerHTML = `<div class="text-center py-12"><i class="fa-solid fa-triangle-exclamation text-2xl text-red-500 mb-3"></i><p class="text-red-500 text-xs font-bold uppercase tracking-widest">${e.message}</p></div>`;
+        } else {
+            console.error(e);
+        }
+    } finally {
+        libraryLoading = false;
     }
 }
 function togglePlay(uuid, btn) {
@@ -203,3 +258,11 @@ setInterval(() => {
         if(data.data && data.data.list) syncSongs(data.data.list);
     }).catch(() => {});
 }, 10000);
+
+window.addEventListener('scroll', () => {
+    if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 150) {
+        if (libraryHasMore && !libraryLoading) {
+            loadAllSongs(true);
+        }
+    }
+});
