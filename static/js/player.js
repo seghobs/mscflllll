@@ -205,6 +205,10 @@ function fpBind() {
         if(art) art.classList.remove('playing');
         if(bar) bar.style.width = '0%';
         if(cur) cur.textContent = '0:00';
+        
+        if (typeof playNextLibrarySong === 'function') {
+            playNextLibrarySong();
+        }
     };
 }
 
@@ -315,4 +319,41 @@ function cpMute(id) {
     const slider = document.querySelector('#cp-'+id+' .cp-vol-slider');
     if(slider) slider.value = audio.volume;
     cpVolume(id, audio.volume);
+}
+
+function playNextLibrarySong() {
+    if (!fpCurrentId) return;
+    
+    let currentUuid = "";
+    if (fpCurrentId.includes("/api/download/")) {
+        currentUuid = fpCurrentId.split("/api/download/")[1];
+    } else {
+        return;
+    }
+    
+    const container = document.getElementById('allSongsContainer');
+    if (!container) return;
+    
+    const cards = Array.from(container.querySelectorAll('.shadcn-card[data-sid]'));
+    const currentCard = container.querySelector(`.shadcn-card[data-sid="${currentUuid}"]`);
+    if (!currentCard) return;
+    
+    const currentIndex = cards.indexOf(currentCard);
+    if (currentIndex === -1) return;
+    
+    let nextIndex = currentIndex + 1;
+    while (nextIndex < cards.length) {
+        const nextCard = cards[nextIndex];
+        if (nextCard.dataset.ready === "true") {
+            const playBtn = nextCard.querySelector('button[onclick^="togglePlay"]');
+            if (playBtn) {
+                if (typeof resetLibraryPlayButtons === 'function') {
+                    resetLibraryPlayButtons();
+                }
+                playBtn.click();
+                break;
+            }
+        }
+        nextIndex++;
+    }
 }
