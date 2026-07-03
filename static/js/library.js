@@ -38,7 +38,7 @@ function showResults(songs) {
 let libraryPage = 1;
 let libraryLoading = false;
 let libraryHasMore = true;
-const libraryLimit = 20;
+const libraryLimit = 5;
 
 async function loadAllSongs(isNextPage = false) {
     if (libraryLoading) return;
