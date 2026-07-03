@@ -93,7 +93,7 @@ async function loadAllSongs(isNextPage = false) {
                             <div class="text-[10px] font-bold uppercase tracking-widest text-zinc-500 flex items-center gap-3">
                                 <i class="fa-regular fa-clock"></i> ${dur}
                             </div>
-                            ${song.lyrics ? `<details class="mt-3"><summary class="text-[10px] font-bold uppercase tracking-widest text-zinc-600 cursor-pointer hover:text-zinc-400 transition"><i class="fa-solid fa-chevron-right mr-1.5"></i>Sözler</summary><pre class="text-[10px] text-zinc-500 mt-2 whitespace-pre-wrap max-h-28 overflow-y-auto bg-zinc-950 border border-zinc-900 rounded-md p-3 leading-relaxed">${song.lyrics.substring(0, 400)}</pre></details>` : ''}
+                            ${song.lyrics ? `<details class="mt-3"><summary class="text-[10px] font-bold uppercase tracking-widest text-zinc-600 cursor-pointer hover:text-zinc-400 transition"><i class="fa-solid fa-chevron-right mr-1.5"></i>Sözler & Tarz</summary><div class="text-[10px] text-zinc-500 mt-2 bg-zinc-950 border border-zinc-900 rounded-md p-3 leading-relaxed">${song.style ? `<div class="mb-2 pb-2 border-b border-zinc-900/60"><span class="text-zinc-400 font-bold uppercase mr-1">Tarz:</span> ${song.style}</div>` : ''}<pre class="whitespace-pre-wrap max-h-48 overflow-y-auto leading-relaxed">${song.lyrics}</pre></div></details>` : ''}
                         </div>
                         <div class="flex gap-2 flex-shrink-0">${actions}</div>
                     </div>
@@ -171,7 +171,7 @@ function syncSongs(newSongs) {
                             <div class="text-[10px] font-bold uppercase tracking-widest text-zinc-500 flex items-center gap-3">
                                 <i class="fa-regular fa-clock"></i> ${dur}
                             </div>
-                            ${song.lyrics ? `<details class="mt-3"><summary class="text-[10px] font-bold uppercase tracking-widest text-zinc-600 cursor-pointer hover:text-zinc-400 transition"><i class="fa-solid fa-chevron-right mr-1.5"></i>Sözler</summary><pre class="text-[10px] text-zinc-500 mt-2 whitespace-pre-wrap max-h-28 overflow-y-auto bg-zinc-950 border border-zinc-900 rounded-md p-3 leading-relaxed">${song.lyrics.substring(0,400)}</pre></details>` : ''}
+                             ${song.lyrics ? `<details class="mt-3"><summary class="text-[10px] font-bold uppercase tracking-widest text-zinc-600 cursor-pointer hover:text-zinc-400 transition"><i class="fa-solid fa-chevron-right mr-1.5"></i>Sözler & Tarz</summary><div class="text-[10px] text-zinc-500 mt-2 bg-zinc-950 border border-zinc-900 rounded-md p-3 leading-relaxed">${song.style ? `<div class="mb-2 pb-2 border-b border-zinc-900/60"><span class="text-zinc-400 font-bold uppercase mr-1">Tarz:</span> ${song.style}</div>` : ''}<pre class="whitespace-pre-wrap max-h-48 overflow-y-auto leading-relaxed">${song.lyrics}</pre></div></details>` : ''}
                         </div>
                         <div class="flex gap-2 flex-shrink-0">
                             <button onclick="togglePlay('${sid}',this)" class="shadcn-button-secondary px-3 py-1.5 text-xs flex items-center gap-2">
