@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Musicful AI Cover</title>
+    <title>Musicful AI Studio</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <!-- Context Menu -->
     {% include 'components/context_menu.html' %}
     <!-- Video Modal -->
@@ -21,22 +21,22 @@
     {% include 'components/yt_action_modal.html' %}
 
     <!-- Custom Context Menu -->
-    <div id="contextMenu" class="fixed hidden z-[9999] w-52 bg-zinc-950 border border-zinc-800 rounded-lg shadow-2xl py-1.5 overflow-hidden backdrop-blur-xl">
+    <div id="contextMenu" class="fixed hidden z-[9999] w-52 bg-[#0c0c14]/95 backdrop-blur-xl border border-white/[0.06] rounded-xl shadow-2xl py-1.5 overflow-hidden">
         <!-- Queue Section -->
         <div id="ctxQueueSection">
-            <button id="ctxCancelTask" onclick="cancelQueueTask()" class="w-full px-3 py-2 text-left text-[11px] font-bold uppercase tracking-widest text-red-500 hover:bg-red-500/10 flex items-center gap-3 transition-colors">
+            <button id="ctxCancelTask" onclick="cancelQueueTask()" class="w-full px-3 py-2 text-left text-[11px] font-bold uppercase tracking-widest text-rose-400 hover:bg-rose-500/10 flex items-center gap-3 transition-colors">
                 <i class="fa-solid fa-circle-stop w-4"></i> İşlemi İptal Et
             </button>
-            <button id="ctxShowTask" onclick="showQueueTask()" class="w-full px-3 py-2 text-left text-[11px] font-bold uppercase tracking-widest text-zinc-300 hover:bg-zinc-900 flex items-center gap-3 transition-colors border-t border-zinc-900 mt-1">
+            <button id="ctxShowTask" onclick="showQueueTask()" class="w-full px-3 py-2 text-left text-[11px] font-bold uppercase tracking-widest text-zinc-300 hover:bg-violet-500/10 flex items-center gap-3 transition-colors border-t border-white/[0.04] mt-1">
                 <i class="fa-solid fa-eye w-4"></i> İşlemi Göster
             </button>
         </div>
         <!-- Upload Section -->
         <div id="ctxUploadSection" class="hidden">
-            <button onclick="listenToUpload()" class="w-full px-3 py-2 text-left text-[11px] font-bold uppercase tracking-widest text-zinc-300 hover:bg-zinc-900 flex items-center gap-3 transition-colors">
+            <button onclick="listenToUpload()" class="w-full px-3 py-2 text-left text-[11px] font-bold uppercase tracking-widest text-zinc-300 hover:bg-violet-500/10 flex items-center gap-3 transition-colors">
                 <i class="fa-solid fa-circle-play w-4"></i> Şarkıyı Dinle
             </button>
-            <button onclick="clearUploadedFile()" class="w-full px-3 py-2 text-left text-[11px] font-bold uppercase tracking-widest text-red-500 hover:bg-red-500/10 flex items-center gap-3 transition-colors border-t border-zinc-900 mt-1">
+            <button onclick="clearUploadedFile()" class="w-full px-3 py-2 text-left text-[11px] font-bold uppercase tracking-widest text-rose-400 hover:bg-rose-500/10 flex items-center gap-3 transition-colors border-t border-white/[0.04] mt-1">
                 <i class="fa-solid fa-trash-can w-4"></i> Seçilen Şarkıyı Sil
             </button>
         </div>
@@ -45,33 +45,33 @@
         tailwind.config = {
             theme: {
                 extend: {
-                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    fontFamily: { sans: ['Outfit', 'Inter', 'sans-serif'] },
                     colors: {
-                        border: "hsl(240 3.7% 15.9%)",
-                        input: "hsl(240 3.7% 15.9%)",
-                        ring: "hsl(240 4.9% 83.9%)",
-                        background: "hsl(240 10% 3.9%)",
-                        foreground: "hsl(0 0% 98%)",
+                        border: "rgba(255,255,255,0.06)",
+                        input: "rgba(255,255,255,0.06)",
+                        ring: "#8b5cf6",
+                        background: "#050508",
+                        foreground: "#f0f0f5",
                         primary: {
-                            DEFAULT: "hsl(0 0% 98%)",
-                            foreground: "hsl(240 5.9% 10%)",
+                            DEFAULT: "#8b5cf6",
+                            foreground: "#ffffff",
                         },
                         secondary: {
-                            DEFAULT: "hsl(240 3.7% 15.9%)",
-                            foreground: "hsl(0 0% 98%)",
+                            DEFAULT: "rgba(20,20,35,0.6)",
+                            foreground: "#f0f0f5",
                         },
                         muted: {
-                            DEFAULT: "hsl(240 3.7% 15.9%)",
-                            foreground: "hsl(240 5% 64.9%)",
+                            DEFAULT: "rgba(20,20,35,0.6)",
+                            foreground: "#8b8b9e",
                         },
                         accent: {
-                            DEFAULT: "hsl(240 3.7% 15.9%)",
-                            foreground: "hsl(0 0% 98%)",
+                            DEFAULT: "#8b5cf6",
+                            foreground: "#ffffff",
                         },
                         zinc: {
-                            50: "#fafafa", 100: "#f4f4f5", 200: "#e4e4e7", 300: "#d4d4d8",
-                            400: "#a1a1aa", 500: "#71717a", 600: "#52525b", 700: "#3f3f46",
-                            800: "#27272a", 900: "#18181b", 950: "#09090b"
+                            50: "#f0f0f5", 100: "#e0e0e8", 200: "#c0c0d0", 300: "#9a9ab0",
+                            400: "#8b8b9e", 500: "#6a6a80", 600: "#4a4a5e", 700: "#2a2a3e",
+                            800: "rgba(255,255,255,0.06)", 900: "#0a0a0f", 950: "#050508"
                         }
                     }
                 }
@@ -79,123 +79,92 @@
         }
     </script>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    <style>
-        :root {
-            --background: 240 10% 3.9%;
-            --foreground: 0 0% 98%;
-            --card: 240 10% 3.9%;
-            --card-foreground: 0 0% 98%;
-            --popover: 240 10% 3.9%;
-            --popover-foreground: 0 0% 98%;
-            --primary: 0 0% 98%;
-            --primary-foreground: 240 5.9% 10%;
-            --secondary: 240 3.7% 15.9%;
-            --secondary-foreground: 0 0% 98%;
-            --muted: 240 3.7% 15.9%;
-            --muted-foreground: 240 5% 64.9%;
-            --accent: 240 3.7% 15.9%;
-            --accent-foreground: 0 0% 98%;
-            --destructive: 0 62.8% 30.6%;
-            --destructive-foreground: 0 0% 98%;
-            --border: 240 3.7% 15.9%;
-            --input: 240 3.7% 15.9%;
-            --ring: 240 4.9% 83.9%;
-            --radius: 0.5rem;
-        }
-        .shadcn-card { background-color: hsl(var(--card)); border: 1px solid hsl(var(--border)); border-radius: var(--radius); }
-        .shadcn-button-primary { background-color: hsl(var(--primary)); color: hsl(var(--primary-foreground)); border-radius: var(--radius); font-weight: 500; transition: opacity 0.2s; }
-        .shadcn-button-primary:hover { opacity: 0.9; }
-        .shadcn-button-secondary { background-color: hsl(var(--secondary)); color: hsl(var(--secondary-foreground)); border-radius: var(--radius); font-weight: 500; border: 1px solid hsl(var(--border)); transition: background-color 0.2s; }
-        .shadcn-button-secondary:hover { background-color: hsl(var(--accent)); }
-        .shadcn-input { background-color: transparent; border: 1px solid hsl(var(--input)); border-radius: var(--radius); color: hsl(var(--foreground)); transition: border-color 0.2s; }
-        .shadcn-input:focus { border-color: hsl(var(--ring)); outline: none; }
-    </style>
 </head>
-<body class="bg-background text-foreground min-h-screen font-sans selection:bg-zinc-800">
+<body class="bg-background text-foreground min-h-screen font-sans">
     <!-- Footer Player -->
     {% include 'components/footer_player.html' %}
     <!-- YouTube Videos Sidebar -->
     {% include 'components/youtube_sidebar.html' %}
     <!-- ── QUEUE SIDEBAR ───────────────── -->
-    <div id="queueSidebar" class="queue-sidebar fixed left-4 top-36 bottom-2 z-40 flex flex-col transition-all duration-500 ease-in-out -translate-x-[calc(100%+1rem)] md:w-56 w-72 md:left-4 left-0 md:rounded-lg rounded-none bg-zinc-950 border-r md:border border-zinc-800 shadow-2xl overflow-hidden">
+    <div id="queueSidebar" class="queue-sidebar fixed left-4 top-36 bottom-2 z-40 flex flex-col transition-all duration-500 ease-in-out -translate-x-[calc(100%+1rem)] md:w-56 w-72 md:left-4 left-0 md:rounded-lg rounded-none overflow-hidden">
         <!-- Header -->
-        <div class="px-4 py-5 border-b border-zinc-900 bg-zinc-950 flex items-center gap-3 flex-shrink-0">
-            <div class="w-8 h-8 bg-white/5 border border-white/10 rounded-lg flex items-center justify-center shadow-inner">
-                <i class="fa-solid fa-list-check text-white text-[10px]"></i>
+        <div class="px-4 py-5 border-b border-white/[0.04] flex items-center gap-3 flex-shrink-0">
+            <div class="w-8 h-8 bg-gradient-to-br from-violet-500/20 to-indigo-500/10 border border-violet-500/20 rounded-lg flex items-center justify-center">
+                <i class="fa-solid fa-list-check text-violet-400 text-[10px]"></i>
             </div>
             <div class="flex flex-col">
                 <span class="text-[11px] font-bold uppercase tracking-[0.2em] text-white">İşlem Kuyruğu</span>
-                <span id="queueStatusSub" class="text-[9px] text-zinc-500 font-bold uppercase tracking-widest mt-0.5">Aktif Görevler</span>
+                <span id="queueStatusSub" class="text-[9px] text-violet-400/60 font-bold uppercase tracking-widest mt-0.5">Aktif Görevler</span>
             </div>
-            <button onclick="toggleQueuePanel()" class="md:hidden ml-auto w-8 h-8 rounded-full hover:bg-zinc-900 flex items-center justify-center text-zinc-500 transition-colors">
+            <button onclick="toggleQueuePanel()" class="md:hidden ml-auto w-8 h-8 rounded-full hover:bg-violet-500/10 flex items-center justify-center text-zinc-500 transition-colors">
                 <i class="fa-solid fa-chevron-left text-xs"></i>
             </button>
         </div>
         <!-- Task List -->
         <div id="queuePanelList" class="flex-1 overflow-y-auto p-3 custom-scrollbar space-y-2">
             <!-- Empty state -->
-            <div id="queueEmptyState" class="text-center py-20 text-zinc-500">
-                <div class="w-12 h-12 bg-zinc-900/50 rounded-full flex items-center justify-center mx-auto mb-4 border border-zinc-800/50">
-                    <i class="fa-solid fa-check text-sm opacity-20"></i>
+            <div id="queueEmptyState" class="text-center py-20">
+                <div class="w-12 h-12 bg-gradient-to-br from-violet-500/10 to-indigo-500/5 rounded-full flex items-center justify-center mx-auto mb-4 border border-violet-500/10">
+                    <i class="fa-solid fa-check text-sm text-violet-500/30"></i>
                 </div>
-                <p class="text-[10px] font-bold uppercase tracking-widest opacity-40">Her Şey Hazır</p>
+                <p class="text-[10px] font-bold uppercase tracking-widest text-zinc-600">Her Şey Hazır</p>
             </div>
         </div>
     </div>
 
     <!-- Mobile Queue Toggle (Moved to Right Sidebar) -->
 
-    <div class="relative max-w-4xl mx-auto px-4 py-8 main-content" style="">
+    <div class="relative max-w-4xl mx-auto px-4 py-8 main-content">
         <!-- Header -->
-        <div class="text-center mb-10 fade-in">
-            <div class="inline-flex items-center gap-3 mb-3">
-                <div class="w-10 h-10 bg-white text-black rounded-lg flex items-center justify-center shadow-sm">
-                    <i class="fa-solid fa-music text-lg"></i>
+        <div class="text-center mb-12 fade-in">
+            <div class="inline-flex items-center gap-4 mb-4">
+                <div class="w-12 h-12 bg-gradient-to-br from-violet-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg" style="box-shadow: 0 8px 25px rgba(139, 92, 246, 0.3);">
+                    <i class="fa-solid fa-music text-white text-lg"></i>
                 </div>
-                <h1 class="text-3xl font-bold tracking-tighter text-white">Musicful AI</h1>
+                <h1 class="text-4xl font-extrabold tracking-tight bg-gradient-to-r from-white via-violet-200 to-violet-400 bg-clip-text text-transparent">Musicful AI</h1>
             </div>
-            <p class="text-zinc-500 text-sm font-medium tracking-tight">Yapay zeka ile şarkı cover oluştur</p>
+            <p class="text-zinc-500 text-sm font-medium tracking-wide">Yapay zeka ile şarkı cover oluştur</p>
+            <div class="w-24 h-1 bg-gradient-to-r from-violet-500/0 via-violet-500/40 to-violet-500/0 mx-auto mt-4 rounded-full"></div>
         </div>
 
         <!-- Right Sidebar Toolbar -->
-        <div class="fixed top-1/2 right-4 -translate-y-1/2 z-[55] fade-in flex flex-col gap-3 p-2 bg-zinc-950/80 backdrop-blur-xl border border-zinc-800 shadow-2xl rounded-2xl">
+        <div class="fixed top-1/2 right-4 -translate-y-1/2 z-[55] fade-in flex flex-col gap-3 p-2.5 bg-[#0a0a0f]/80 backdrop-blur-2xl border border-white/[0.06] shadow-2xl rounded-2xl" style="box-shadow: 0 8px 40px rgba(0,0,0,0.5), inset 0 0 0 1px rgba(255,255,255,0.03);">
             
-            <button onclick="openQuickSearch()" class="w-10 h-10 rounded-xl bg-zinc-900/50 border border-zinc-800/50 flex items-center justify-center group hover:bg-emerald-500 hover:border-emerald-400 transition-all shadow-sm relative">
-                <i class="fa-solid fa-magnifying-glass text-zinc-400 group-hover:text-black transition"></i>
-                <!-- Tooltip -->
-                <div class="absolute right-full mr-3 top-1/2 -translate-y-1/2 bg-zinc-950 border border-zinc-800 text-white text-[10px] font-bold uppercase tracking-widest px-3 py-1.5 rounded-lg opacity-0 group-hover:opacity-100 translate-x-2 group-hover:translate-x-0 transition-all pointer-events-none whitespace-nowrap shadow-xl">
+            <button onclick="openQuickSearch()" class="w-10 h-10 rounded-xl bg-white/[0.03] border border-white/[0.06] flex items-center justify-center group hover:bg-emerald-500/20 hover:border-emerald-500/30 transition-all relative">
+                <i class="fa-solid fa-magnifying-glass text-zinc-500 group-hover:text-emerald-400 transition"></i>
+                <div class="absolute right-full mr-3 top-1/2 -translate-y-1/2 bg-[#0c0c14] border border-white/[0.08] text-white text-[10px] font-bold uppercase tracking-widest px-3 py-1.5 rounded-lg opacity-0 group-hover:opacity-100 translate-x-2 group-hover:translate-x-0 transition-all pointer-events-none whitespace-nowrap shadow-xl">
                     Hızlı Arama
                 </div>
             </button>
 
-            <button onclick="toggleYtVideosSidebar()" class="w-10 h-10 rounded-xl bg-zinc-900/50 border border-zinc-800/50 flex items-center justify-center group hover:bg-red-500 hover:border-red-400 transition-all shadow-sm relative">
-                <i class="fa-brands fa-youtube text-zinc-400 group-hover:text-white transition"></i>
-                <div class="absolute right-full mr-3 top-1/2 -translate-y-1/2 bg-zinc-950 border border-zinc-800 text-white text-[10px] font-bold uppercase tracking-widest px-3 py-1.5 rounded-lg opacity-0 group-hover:opacity-100 translate-x-2 group-hover:translate-x-0 transition-all pointer-events-none whitespace-nowrap shadow-xl">
+            <button onclick="toggleYtVideosSidebar()" class="w-10 h-10 rounded-xl bg-white/[0.03] border border-white/[0.06] flex items-center justify-center group hover:bg-red-500/20 hover:border-red-500/30 transition-all relative">
+                <i class="fa-brands fa-youtube text-zinc-500 group-hover:text-red-400 transition"></i>
+                <div class="absolute right-full mr-3 top-1/2 -translate-y-1/2 bg-[#0c0c14] border border-white/[0.08] text-white text-[10px] font-bold uppercase tracking-widest px-3 py-1.5 rounded-lg opacity-0 group-hover:opacity-100 translate-x-2 group-hover:translate-x-0 transition-all pointer-events-none whitespace-nowrap shadow-xl">
                     YouTube Arşivi
                 </div>
             </button>
             
-            <button onclick="toggleQueuePanel()" class="w-10 h-10 rounded-xl bg-zinc-900/50 border border-zinc-800/50 flex items-center justify-center group hover:bg-indigo-500 hover:border-indigo-400 transition-all shadow-sm relative">
-                <i class="fa-solid fa-server text-zinc-400 group-hover:text-white transition"></i>
-                <span id="queueMobileBadge" class="absolute -top-1 -right-1 bg-white text-black text-[9px] font-black w-4 h-4 flex items-center justify-center rounded-full border border-zinc-950 hidden"></span>
-                <div class="absolute right-full mr-3 top-1/2 -translate-y-1/2 bg-zinc-950 border border-zinc-800 text-white text-[10px] font-bold uppercase tracking-widest px-3 py-1.5 rounded-lg opacity-0 group-hover:opacity-100 translate-x-2 group-hover:translate-x-0 transition-all pointer-events-none whitespace-nowrap shadow-xl">
+            <button onclick="toggleQueuePanel()" class="w-10 h-10 rounded-xl bg-white/[0.03] border border-white/[0.06] flex items-center justify-center group hover:bg-indigo-500/20 hover:border-indigo-500/30 transition-all relative">
+                <i class="fa-solid fa-server text-zinc-500 group-hover:text-indigo-400 transition"></i>
+                <span id="queueMobileBadge" class="absolute -top-1 -right-1 badge-glow text-white text-[9px] font-black w-4 h-4 flex items-center justify-center rounded-full hidden"></span>
+                <div class="absolute right-full mr-3 top-1/2 -translate-y-1/2 bg-[#0c0c14] border border-white/[0.08] text-white text-[10px] font-bold uppercase tracking-widest px-3 py-1.5 rounded-lg opacity-0 group-hover:opacity-100 translate-x-2 group-hover:translate-x-0 transition-all pointer-events-none whitespace-nowrap shadow-xl">
                     İşlem Kuyruğu
                 </div>
             </button>
             
-            <button id="draftsToggleBtn" onclick="toggleDraftsPanel()" class="w-10 h-10 rounded-xl bg-zinc-900/50 border border-zinc-800/50 flex items-center justify-center group hover:bg-yellow-500 hover:border-yellow-400 transition-all shadow-sm relative hidden">
-                <i class="fa-solid fa-list-check text-zinc-400 group-hover:text-black transition"></i>
-                <span id="draftsCountBadge" class="absolute -top-1 -right-1 bg-white text-black text-[9px] font-black w-4 h-4 flex items-center justify-center rounded-full border border-zinc-950 hidden"></span>
-                <div class="absolute right-full mr-3 top-1/2 -translate-y-1/2 bg-zinc-950 border border-zinc-800 text-white text-[10px] font-bold uppercase tracking-widest px-3 py-1.5 rounded-lg opacity-0 group-hover:opacity-100 translate-x-2 group-hover:translate-x-0 transition-all pointer-events-none whitespace-nowrap shadow-xl">
+            <button id="draftsToggleBtn" onclick="toggleDraftsPanel()" class="w-10 h-10 rounded-xl bg-white/[0.03] border border-white/[0.06] flex items-center justify-center group hover:bg-amber-500/20 hover:border-amber-500/30 transition-all relative hidden">
+                <i class="fa-solid fa-list-check text-zinc-500 group-hover:text-amber-400 transition"></i>
+                <span id="draftsCountBadge" class="absolute -top-1 -right-1 badge-glow text-white text-[9px] font-black w-4 h-4 flex items-center justify-center rounded-full hidden"></span>
+                <div class="absolute right-full mr-3 top-1/2 -translate-y-1/2 bg-[#0c0c14] border border-white/[0.08] text-white text-[10px] font-bold uppercase tracking-widest px-3 py-1.5 rounded-lg opacity-0 group-hover:opacity-100 translate-x-2 group-hover:translate-x-0 transition-all pointer-events-none whitespace-nowrap shadow-xl">
                     Yarım Kalan Taslaklar
                 </div>
             </button>
             
-            <div class="w-full h-px bg-zinc-800/50 my-1"></div>
+            <div class="w-full h-px bg-gradient-to-r from-transparent via-white/[0.06] to-transparent my-1"></div>
 
-            <button onclick="openSettings()" class="w-10 h-10 rounded-xl bg-zinc-900/50 border border-zinc-800/50 flex items-center justify-center group hover:bg-white hover:border-white transition-all shadow-sm relative">
-                <i class="fa-solid fa-gear text-zinc-400 group-hover:text-black group-hover:rotate-90 transition-all duration-300"></i>
-                <div class="absolute right-full mr-3 top-1/2 -translate-y-1/2 bg-zinc-950 border border-zinc-800 text-white text-[10px] font-bold uppercase tracking-widest px-3 py-1.5 rounded-lg opacity-0 group-hover:opacity-100 translate-x-2 group-hover:translate-x-0 transition-all pointer-events-none whitespace-nowrap shadow-xl">
+            <button onclick="openSettings()" class="w-10 h-10 rounded-xl bg-white/[0.03] border border-white/[0.06] flex items-center justify-center group hover:bg-violet-500/20 hover:border-violet-500/30 transition-all relative">
+                <i class="fa-solid fa-gear text-zinc-500 group-hover:text-violet-400 group-hover:rotate-90 transition-all duration-300"></i>
+                <div class="absolute right-full mr-3 top-1/2 -translate-y-1/2 bg-[#0c0c14] border border-white/[0.08] text-white text-[10px] font-bold uppercase tracking-widest px-3 py-1.5 rounded-lg opacity-0 group-hover:opacity-100 translate-x-2 group-hover:translate-x-0 transition-all pointer-events-none whitespace-nowrap shadow-xl">
                     Sistem Ayarları
                 </div>
             </button>
@@ -205,15 +174,15 @@
         <!-- Rights Bar -->
         <div id="rights-bar" class="shadcn-card p-4 mb-6 flex justify-between items-center text-xs fade-in">
             <div class="flex items-center gap-3">
-                <i class="fa-solid fa-spinner fa-spin text-zinc-500"></i>
+                <i class="fa-solid fa-spinner fa-spin text-violet-400/60"></i>
                 <span class="text-zinc-500 text-[10px] font-bold uppercase tracking-widest">Hesap bilgileri doğrulanıyor...</span>
             </div>
         </div>
 
         <!-- Steps -->
-        <div class="flex gap-2 mb-8 fade-in">
-            <div id="step1" class="step flex-1 shadcn-card p-4 text-center cursor-pointer transition-all step-active border-white">
-                <i class="fa-solid fa-cloud-arrow-up text-lg mb-1"></i>
+        <div class="flex gap-3 mb-8 fade-in">
+            <div id="step1" class="step flex-1 shadcn-card p-4 text-center cursor-pointer transition-all step-active">
+                <i class="fa-solid fa-cloud-arrow-up text-lg mb-1 text-violet-400"></i>
                 <div class="text-[10px] font-bold uppercase tracking-widest mt-1">Yükle</div>
             </div>
             <div id="step2" class="step flex-1 shadcn-card p-4 text-center cursor-pointer transition-all opacity-40">
@@ -230,59 +199,98 @@
             </div>
         </div>
 
-        <!-- PANEL 1: Upload -->
+        <!-- PANEL 1: Upload / Mode Select -->
         <div id="panel1" class="shadcn-card p-8 mb-6 fade-in">
-            <div class="flex items-center gap-3 mb-6">
-                <h2 class="text-xl font-bold tracking-tight">MP3 Dosyası Yükle</h2>
-            </div>
-            <div class="border-2 border-dashed border-zinc-800 rounded-lg p-12 text-center hover:bg-zinc-900/50 transition-all cursor-pointer group" id="dropzone">
-                <input type="file" id="fileInput" accept=".mp3,audio/mpeg" class="hidden">
-                <div id="fileLabel">
-                    <div class="w-12 h-12 bg-zinc-900 border border-zinc-800 rounded-lg flex items-center justify-center mx-auto mb-4 group-hover:border-zinc-700 transition-colors">
-                        <i class="fa-solid fa-upload text-zinc-500 group-hover:text-zinc-300"></i>
-                    </div>
-                    <div class="text-sm font-medium mb-1">Dosyayı buraya bırakın</div>
-                    <div class="text-zinc-500 text-xs">veya tıklayarak seçin</div>
-                </div>
-            </div>
-            <div id="uploadStatus" class="mt-8 hidden">
-                <div class="flex items-center justify-between mb-3">
-                    <span id="uploadText" class="text-[10px] font-bold uppercase tracking-widest text-zinc-500"></span>
-                </div>
-                <div class="bg-zinc-900 border border-zinc-800 rounded-full h-2 overflow-hidden relative shadow-inner">
-                    <div id="uploadProgress" class="bg-white h-full rounded-full transition-all duration-500" style="width:0%;">
-                    </div>
-                </div>
-            </div>
-
-            <div class="flex items-center gap-3 my-8">
-                <div class="flex-1 h-px bg-zinc-800"></div>
-                <span class="text-zinc-500 text-[10px] font-bold uppercase tracking-widest">veya</span>
-                <div class="flex-1 h-px bg-zinc-800"></div>
-            </div>
-
-            <div class="flex items-center gap-3 mb-4">
-                <h3 class="text-sm font-bold tracking-tight">YouTube</h3>
-            </div>
-
-            <div class="relative mb-3">
-                <input type="text" id="ytSearch" onkeydown="if(event.key==='Enter') searchYoutube()" class="shadcn-input w-full px-4 py-2.5 pr-12 text-sm" placeholder="YouTube'da ara...">
-                <button onclick="searchYoutube()" class="absolute right-1 top-1/2 -translate-y-1/2 w-8 h-8 rounded-md hover:bg-zinc-800 flex items-center justify-center transition">
-                    <i class="fa-solid fa-magnifying-glass text-zinc-500 text-xs"></i>
+            <!-- Mode Switcher -->
+            <div class="flex gap-2 p-1 bg-white/[0.03] border border-white/[0.06] rounded-xl mb-8">
+                <button id="modeCoverBtn" onclick="setMode('cover')" class="flex-1 py-2 text-xs font-black rounded-lg tab-active transition-all duration-300">
+                    <i class="fa-solid fa-music mr-2"></i> Şarkı Dönüştür (Cover)
+                </button>
+                <button id="modeTextToSongBtn" onclick="setMode('text-to-song')" class="flex-1 py-2 text-xs font-bold text-zinc-500 hover:text-white rounded-lg transition-all duration-300">
+                    <i class="fa-solid fa-file-audio mr-2"></i> Yazıdan Şarkı Üret
                 </button>
             </div>
-            <div id="ytResults" class="hidden mb-3 max-h-64 overflow-y-auto space-y-1.5 rounded-lg border border-zinc-800 bg-zinc-950 p-2"></div>
 
-            <div class="flex gap-2">
-                <input type="text" id="ytUrl" onkeydown="if(event.key==='Enter') downloadYoutube()" class="shadcn-input flex-1 px-4 py-2.5 text-sm" placeholder="YouTube linkini yapıştır...">
-                <button onclick="downloadYoutube()" id="ytBtn" class="shadcn-button-primary px-6 py-2.5 text-sm flex items-center gap-2 whitespace-nowrap">
-                    <i class="fa-solid fa-download"></i> İndir
-                </button>
+            <!-- Mode: Cover Section -->
+            <div id="modeCoverSection" class="space-y-6">
+                <div class="flex items-center justify-between">
+                    <h2 class="text-xl font-bold tracking-tight">MP3 Dosyası Yükle</h2>
+                    <div class="flex items-center gap-2 select-none">
+                        <input type="checkbox" id="bypassCoverFilter" class="w-4 h-4 rounded border-white/[0.08] bg-[#0c0c14] text-violet-500 focus:ring-violet-500 cursor-pointer">
+                        <label for="bypassCoverFilter" class="text-xs font-semibold text-zinc-400 cursor-pointer">Telif / Filtre Bypass</label>
+                    </div>
+                </div>
+                <div class="border-2 border-dashed border-white/[0.08] rounded-xl p-12 text-center hover:border-violet-500/30 hover:bg-violet-500/[0.02] transition-all duration-500 cursor-pointer group" id="dropzone">
+                    <input type="file" id="fileInput" accept=".mp3,audio/mpeg" class="hidden">
+                    <div id="fileLabel">
+                        <div class="w-14 h-14 bg-gradient-to-br from-violet-500/15 to-indigo-500/10 border border-violet-500/15 rounded-xl flex items-center justify-center mx-auto mb-4 group-hover:border-violet-500/30 group-hover:shadow-lg transition-all" style="transition: box-shadow 0.3s;">
+                            <i class="fa-solid fa-upload text-violet-400/60 group-hover:text-violet-400 text-lg transition"></i>
+                        </div>
+                        <div class="text-sm font-semibold mb-1">Dosyayı buraya bırakın</div>
+                        <div class="text-zinc-500 text-xs">veya tıklayarak seçin</div>
+                    </div>
+                </div>
+                <div id="uploadStatus" class="mt-8 hidden">
+                    <div class="flex items-center justify-between mb-3">
+                        <span id="uploadText" class="text-[10px] font-bold uppercase tracking-widest text-zinc-500"></span>
+                    </div>
+                    <div class="bg-[#0f0f16] border border-white/[0.04] rounded-full h-2 overflow-hidden relative">
+                        <div id="uploadProgress" class="progress-gradient h-full rounded-full transition-all duration-500" style="width:0%;">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-3 my-8">
+                    <div class="flex-1 h-px bg-gradient-to-r from-transparent via-white/[0.06] to-transparent"></div>
+                    <span class="text-zinc-600 text-[10px] font-bold uppercase tracking-widest">veya</span>
+                    <div class="flex-1 h-px bg-gradient-to-r from-transparent via-white/[0.06] to-transparent"></div>
+                </div>
+
+                <div class="flex items-center gap-3 mb-4">
+                    <i class="fa-brands fa-youtube text-red-400/60 text-xs"></i>
+                    <h3 class="text-sm font-bold tracking-tight">YouTube</h3>
+                </div>
+
+                <div class="relative mb-3">
+                    <input type="text" id="ytSearch" onkeydown="if(event.key==='Enter') searchYoutube()" class="shadcn-input w-full px-4 py-2.5 pr-12 text-sm" placeholder="YouTube'da ara...">
+                    <button onclick="searchYoutube()" class="absolute right-1 top-1/2 -translate-y-1/2 w-8 h-8 rounded-md hover:bg-violet-500/10 flex items-center justify-center transition">
+                        <i class="fa-solid fa-magnifying-glass text-zinc-500 text-xs"></i>
+                    </button>
+                </div>
+                <div id="ytResults" class="hidden mb-3 max-h-64 overflow-y-auto space-y-1.5 rounded-xl border border-white/[0.06] bg-[#0a0a0f] p-2"></div>
+
+                <div class="flex gap-2">
+                    <input type="text" id="ytUrl" onkeydown="if(event.key==='Enter') downloadYoutube()" class="shadcn-input flex-1 px-4 py-2.5 text-sm" placeholder="YouTube linkini yapıştır...">
+                    <button onclick="downloadYoutube()" id="ytBtn" class="shadcn-button-primary px-6 py-2.5 text-sm flex items-center gap-2 whitespace-nowrap">
+                        <i class="fa-solid fa-download"></i> İndir
+                    </button>
+                </div>
+                <div id="ytStatus" class="mt-4 hidden">
+                    <div class="flex items-center gap-3 py-3 px-4 bg-violet-500/[0.03] border border-violet-500/10 rounded-xl">
+                        <i class="fa-solid fa-spinner fa-spin text-violet-400/60"></i>
+                        <span id="ytStatusText" class="text-[10px] font-bold uppercase tracking-widest text-zinc-500">İndiriliyor...</span>
+                    </div>
+                </div>
             </div>
-            <div id="ytStatus" class="mt-4 hidden">
-                <div class="flex items-center gap-3 py-3 px-4 bg-zinc-950 border border-zinc-900 rounded-lg">
-                    <i class="fa-solid fa-spinner fa-spin text-zinc-500"></i>
-                    <span id="ytStatusText" class="text-[10px] font-bold uppercase tracking-widest text-zinc-500">İndiriliyor...</span>
+
+            <!-- Mode: Text Section -->
+            <div id="modeTextSection" class="hidden space-y-6">
+                <div class="bg-gradient-to-br from-violet-500/10 to-indigo-500/5 border border-violet-500/20 rounded-2xl p-8 text-center relative overflow-hidden" style="box-shadow: inset 0 0 30px rgba(139, 92, 246, 0.02);">
+                    <div class="absolute -right-10 -top-10 w-40 h-40 bg-violet-500/10 rounded-full blur-3xl pointer-events-none"></div>
+                    <div class="absolute -left-10 -bottom-10 w-40 h-40 bg-cyan-500/5 rounded-full blur-3xl pointer-events-none"></div>
+                    
+                    <div class="w-16 h-16 bg-gradient-to-br from-violet-500/20 to-indigo-500/10 border border-violet-500/20 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg">
+                        <i class="fa-solid fa-wand-magic-sparkles text-violet-400 text-2xl animate-pulse"></i>
+                    </div>
+                    
+                    <h3 class="text-lg font-bold text-white mb-2">Yazıdan Şarkı Üretimi</h3>
+                    <p class="text-zinc-400 text-xs max-w-md mx-auto leading-relaxed mb-6">
+                        Herhangi bir ses veya referans dosyası yüklemenize gerek yok. Doğrudan hayalinizdeki şarkıyı tanımlayan sözleri ve stil promptunu yazarak müzik üretmeye başlayabilirsiniz.
+                    </p>
+                    
+                    <button onclick="goToStep(2)" class="shadcn-button-primary px-8 py-3.5 text-sm inline-flex items-center gap-2 rounded-xl">
+                        Sözler Adımına Geç <i class="fa-solid fa-arrow-right text-xs"></i>
+                    </button>
                 </div>
             </div>
         </div>
@@ -292,14 +300,14 @@
             <div class="flex items-center gap-3 mb-6">
                 <h2 class="text-xl font-bold tracking-tight">Şarkı Sözlerini Düzenle</h2>
             </div>
-            <div class="space-y-4">
+            <div class="space-y-5">
                 <div>
-                    <label class="block text-xs font-bold uppercase tracking-widest text-zinc-500 mb-2">Başlık</label>
+                    <label class="block text-xs font-bold uppercase tracking-widest text-violet-400/60 mb-2">Başlık</label>
                     <input type="text" id="songTitle" class="shadcn-input w-full px-4 py-2.5 text-sm" placeholder="Şarkı adı...">
                 </div>
                 <div>
                     <div class="flex items-center justify-between mb-2">
-                        <label class="block text-xs font-bold uppercase tracking-widest text-zinc-500">Stil</label>
+                        <label class="block text-xs font-bold uppercase tracking-widest text-violet-400/60">Stil</label>
                         <div class="flex gap-3">
                             <button onclick="openStyleManager()" class="text-[9px] font-black uppercase text-indigo-400 hover:text-indigo-300 transition-colors flex items-center gap-1">
                                 <i class="fa-solid fa-layer-group"></i> Stil Kitaplığı
@@ -313,20 +321,24 @@
                         <textarea id="songStyle" class="shadcn-input w-full px-4 py-3 text-sm font-mono resize-y min-h-[80px]" placeholder="60 BPM, Emotional Acoustic Ballad, Slow Melancholic Turkish Vocals..."></textarea>
                     </div>
                     <div class="flex flex-wrap gap-2 mt-3" id="quickStyles">
-                        <button onclick="setStyle('Guitar,Piano')" class="text-[9px] font-bold bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 px-3 py-1.5 rounded transition uppercase tracking-tighter">Acoustic</button>
-                        <button onclick="setStyle('Pop,Rock')" class="text-[9px] font-bold bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 px-3 py-1.5 rounded transition uppercase tracking-tighter">Rock</button>
-                        <button onclick="setStyle('Electronic,Pop')" class="text-[9px] font-bold bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 px-3 py-1.5 rounded transition uppercase tracking-tighter">Electronic</button>
+                        <button onclick="setStyle('Guitar,Piano')" class="text-[9px] font-bold bg-white/[0.03] hover:bg-violet-500/10 border border-white/[0.06] hover:border-violet-500/20 px-3 py-1.5 rounded-lg transition-all uppercase tracking-tighter hover:text-violet-300">Acoustic</button>
+                        <button onclick="setStyle('Pop,Rock')" class="text-[9px] font-bold bg-white/[0.03] hover:bg-violet-500/10 border border-white/[0.06] hover:border-violet-500/20 px-3 py-1.5 rounded-lg transition-all uppercase tracking-tighter hover:text-violet-300">Rock</button>
+                        <button onclick="setStyle('Electronic,Pop')" class="text-[9px] font-bold bg-white/[0.03] hover:bg-violet-500/10 border border-white/[0.06] hover:border-violet-500/20 px-3 py-1.5 rounded-lg transition-all uppercase tracking-tighter hover:text-violet-300">Electronic</button>
                     </div>
                 </div>
                 <div>
-                    <label class="block text-xs font-bold uppercase tracking-widest text-zinc-500 mb-2">Model Versiyonu</label>
+                    <label class="block text-xs font-bold uppercase tracking-widest text-violet-400/60 mb-2">Model Versiyonu</label>
                     <select id="modelSelect" class="shadcn-input w-full px-4 py-2.5 text-sm">
                         <option value="v5.0">v2 versiyon (Standart)</option>
                         <option value="v5.5" selected>v3 versiyon (Yüksek Kalite)</option>
                     </select>
+                    <div class="flex items-center gap-2 mt-4 select-none">
+                        <input type="checkbox" id="bypassFilter" class="w-4 h-4 rounded border-white/[0.08] bg-[#0c0c14] text-violet-500 focus:ring-violet-500 cursor-pointer">
+                        <label for="bypassFilter" class="text-xs font-semibold text-zinc-400 cursor-pointer">Telif / İçerik Filtresini Atla (Bypass)</label>
+                    </div>
                 </div>
                 <div>
-                    <label class="block text-xs font-bold uppercase tracking-widest text-zinc-500 mb-2">Sözler</label>
+                    <label class="block text-xs font-bold uppercase tracking-widest text-violet-400/60 mb-2">Sözler</label>
                     <textarea id="songLyrics" class="shadcn-input w-full px-4 py-3 font-mono text-sm resize-y" rows="12" placeholder="[Chorus]&#10;Şarkı sözleri..."></textarea>
                 </div>
             </div>
@@ -342,22 +354,22 @@
             <div class="flex items-center gap-3 mb-6">
                 <h2 class="text-xl font-bold tracking-tight">Onay ve Oluştur</h2>
             </div>
-            <div class="bg-zinc-900 border border-zinc-800 rounded-lg p-6 mb-8 space-y-4">
+            <div class="bg-white/[0.02] border border-white/[0.04] rounded-xl p-6 mb-8 space-y-4">
                 <div class="flex items-center justify-between">
-                    <span class="text-xs font-bold uppercase tracking-widest text-zinc-500">Başlık</span>
+                    <span class="text-xs font-bold uppercase tracking-widest text-violet-400/50">Başlık</span>
                     <span id="confirmTitle" class="text-sm font-medium"></span>
                 </div>
                 <div class="flex items-center justify-between">
-                    <span class="text-xs font-bold uppercase tracking-widest text-zinc-500">Stil</span>
+                    <span class="text-xs font-bold uppercase tracking-widest text-violet-400/50">Stil</span>
                     <span id="confirmStyle" class="text-sm font-medium"></span>
                 </div>
                 <div class="flex items-center justify-between">
-                    <span class="text-xs font-bold uppercase tracking-widest text-zinc-500">Model</span>
+                    <span class="text-xs font-bold uppercase tracking-widest text-violet-400/50">Model</span>
                     <span id="confirmModel" class="text-sm font-medium"></span>
                 </div>
-                <div class="pt-4 border-t border-zinc-800">
-                    <span class="block text-xs font-bold uppercase tracking-widest text-zinc-500 mb-3">Sözler</span>
-                    <pre id="confirmLyrics" class="text-xs text-zinc-400 whitespace-pre-wrap max-h-40 overflow-y-auto bg-black rounded p-4 border border-zinc-800"></pre>
+                <div class="pt-4 border-t border-white/[0.04]">
+                    <span class="block text-xs font-bold uppercase tracking-widest text-violet-400/50 mb-3">Sözler</span>
+                    <pre id="confirmLyrics" class="text-xs text-zinc-400 whitespace-pre-wrap max-h-40 overflow-y-auto bg-black/40 rounded-lg p-4 border border-white/[0.04]"></pre>
                 </div>
             </div>
             <button id="createBtn" onclick="createSong()" class="shadcn-button-primary py-4 text-sm w-full flex items-center justify-center gap-3">
@@ -366,13 +378,6 @@
             <div id="createTaskList" class="mt-5 space-y-3"></div>
         </div>
 
-        <!-- PANEL 4: Results -->
-        <div id="panel4" class="shadcn-card p-8 mb-6 hidden">
-            <div class="flex items-center gap-3 mb-6">
-                <h2 class="text-xl font-bold tracking-tight">Sonuçlar</h2>
-            </div>
-            <div id="resultsContainer" class="space-y-4"></div>
-        </div>
 
         <!-- All Songs -->
         <div class="shadcn-card p-8 mb-6 fade-in">
@@ -386,15 +391,16 @@
             </div>
             <div id="allSongsContainer">
                 <div class="flex items-center justify-center py-12">
-                    <i class="fa-solid fa-spinner fa-spin text-zinc-700 mr-2"></i>
+                    <i class="fa-solid fa-spinner fa-spin text-violet-400/40 mr-2"></i>
                     <span class="text-zinc-500 text-xs font-medium">Kütüphane yükleniyor...</span>
                 </div>
             </div>
         </div>
 
         <!-- Footer -->
-        <div class="text-center text-zinc-600 text-[10px] font-bold uppercase tracking-[0.2em] pb-10">
-            Musicful AI Studio
+        <div class="text-center pb-10">
+            <div class="w-16 h-px bg-gradient-to-r from-transparent via-violet-500/20 to-transparent mx-auto mb-4"></div>
+            <span class="text-zinc-600 text-[10px] font-bold uppercase tracking-[0.2em]">Musicful AI Studio</span>
         </div>
     </div>
 
@@ -405,14 +411,13 @@
     <div id="draftsBackdrop" onclick="toggleDraftsPanel()" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[45] hidden transition-opacity duration-300 opacity-0"></div>
 
     <!-- Drafts Panel (Drawer) -->
-    <!-- Drafts Panel (Drawer) -->
-    <div id="draftsPanel" class="fixed left-4 top-36 bottom-2 z-50 flex flex-col transition-all duration-500 ease-in-out -translate-x-[calc(100%+1rem)] md:w-56 w-72 md:left-4 left-0 md:rounded-lg rounded-none bg-zinc-950 border-r md:border border-zinc-800 shadow-2xl overflow-hidden">
-        <div class="px-6 py-8 flex items-center justify-between border-b border-zinc-900">
+    <div id="draftsPanel" class="fixed left-4 top-36 bottom-2 z-50 flex flex-col transition-all duration-500 ease-in-out -translate-x-[calc(100%+1rem)] md:w-56 w-72 md:left-4 left-0 md:rounded-lg rounded-none bg-[#0a0a0f]/95 backdrop-blur-xl border border-white/[0.06] shadow-2xl overflow-hidden">
+        <div class="px-6 py-8 flex items-center justify-between border-b border-white/[0.04]">
             <div class="flex items-center gap-3">
-                <div class="w-2 h-2 rounded-full bg-white animate-pulse"></div>
+                <div class="w-2 h-2 rounded-full bg-violet-400 animate-pulse"></div>
                 <h3 class="font-bold text-white text-sm uppercase tracking-[0.2em]">Taslaklar</h3>
             </div>
-            <button onclick="toggleDraftsPanel()" class="w-8 h-8 flex items-center justify-center rounded-full bg-zinc-900 border border-zinc-800 text-zinc-500 hover:text-white hover:border-zinc-700 transition-all">
+            <button onclick="toggleDraftsPanel()" class="w-8 h-8 flex items-center justify-center rounded-full bg-white/[0.03] border border-white/[0.06] text-zinc-500 hover:text-white hover:border-violet-500/30 transition-all">
                 <i class="fa-solid fa-xmark text-sm"></i>
             </button>
         </div>
@@ -421,22 +426,23 @@
     
     <!-- Style Manager Modal -->
     <div id="styleModal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-[100] hidden items-center justify-center p-4">
-        <div class="bg-zinc-950 border border-zinc-800 rounded-2xl w-full max-w-2xl max-h-[80vh] overflow-hidden flex flex-col shadow-2xl scale-95 opacity-0 transition-all duration-300">
-            <div class="p-6 border-b border-zinc-900 flex items-center justify-between bg-zinc-950/50 backdrop-blur-xl">
+        <div class="bg-[#0c0c14] border border-white/[0.06] rounded-2xl w-full max-w-2xl max-h-[80vh] overflow-hidden flex flex-col shadow-2xl scale-95 opacity-0 transition-all duration-300" style="box-shadow: 0 25px 80px rgba(0,0,0,0.8), 0 0 0 1px rgba(255,255,255,0.04);">
+            <div class="p-6 border-b border-white/[0.04] flex items-center justify-between relative">
+                <div class="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-violet-500/40 to-transparent"></div>
                 <div class="flex items-center gap-3">
-                    <div class="w-8 h-8 bg-indigo-500/10 border border-indigo-500/20 rounded-lg flex items-center justify-center">
-                        <i class="fa-solid fa-layer-group text-indigo-400"></i>
+                    <div class="w-8 h-8 bg-gradient-to-br from-violet-500/20 to-indigo-500/10 border border-violet-500/20 rounded-lg flex items-center justify-center">
+                        <i class="fa-solid fa-layer-group text-violet-400"></i>
                     </div>
                     <h3 class="font-bold text-white text-[10px] uppercase tracking-[0.2em]">Stil Kitaplığı</h3>
                 </div>
-                <button onclick="closeStyleManager()" class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-zinc-900 transition-colors">
+                <button onclick="closeStyleManager()" class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-violet-500/10 transition-colors">
                     <i class="fa-solid fa-xmark text-zinc-500 text-xs"></i>
                 </button>
             </div>
-            <div id="styleLibraryList" class="p-6 space-y-4 overflow-y-auto custom-scrollbar flex-1 bg-zinc-950">
+            <div id="styleLibraryList" class="p-6 space-y-4 overflow-y-auto custom-scrollbar flex-1">
                 <!-- Styles will be listed here -->
             </div>
-            <div class="p-4 bg-zinc-900/30 border-t border-zinc-900 text-center">
+            <div class="p-4 border-t border-white/[0.04] text-center">
                 <p class="text-[9px] text-zinc-600 font-bold uppercase tracking-[0.1em]">Favori promptlarını buradan yönetebilirsin</p>
             </div>
         </div>
@@ -444,22 +450,23 @@
 
     <!-- Save / Edit Style Prompt Modal -->
     <div id="saveStyleModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[110] hidden items-center justify-center p-4">
-        <div class="bg-zinc-950 border border-zinc-800 rounded-xl w-full max-w-lg p-6 shadow-2xl scale-95 opacity-0 transition-all duration-200">
+        <div class="bg-[#0c0c14] border border-white/[0.06] rounded-xl w-full max-w-lg p-6 shadow-2xl scale-95 opacity-0 transition-all duration-200 relative overflow-hidden">
+            <div class="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-emerald-500/40 to-transparent"></div>
             <h3 id="styleModalTitle" class="font-bold text-white text-[10px] uppercase tracking-[0.2em] mb-6 flex items-center gap-2">
-                <i class="fa-solid fa-circle-plus text-emerald-500"></i> Yeni Stili Kaydet
+                <i class="fa-solid fa-circle-plus text-emerald-400"></i> Yeni Stili Kaydet
             </h3>
             <div class="space-y-4">
                 <div>
-                    <label class="text-[9px] font-bold text-zinc-500 uppercase tracking-widest block mb-2">Stil Başlığı</label>
+                    <label class="text-[9px] font-bold text-violet-400/50 uppercase tracking-widest block mb-2">Stil Başlığı</label>
                     <input type="text" id="newStyleTitle" class="shadcn-input w-full px-4 py-3 text-sm" placeholder="Örn: Duygusal Akustik">
                 </div>
                 <div>
-                    <label class="text-[9px] font-bold text-zinc-500 uppercase tracking-widest block mb-2">Prompt İçeriği</label>
+                    <label class="text-[9px] font-bold text-violet-400/50 uppercase tracking-widest block mb-2">Prompt İçeriği</label>
                     <textarea id="newStylePrompt" class="shadcn-input w-full px-4 py-3 text-xs font-mono resize-y min-h-[120px]" placeholder="BPM, Instruments, Vocals..."></textarea>
                 </div>
                 <div class="flex gap-3 pt-2">
                     <button onclick="closeSaveStyle()" class="flex-1 py-3 text-[10px] font-bold uppercase tracking-widest text-zinc-500 hover:text-white transition">İptal</button>
-                    <button id="saveStyleBtn" onclick="saveStyleToLibrary()" class="flex-1 bg-white text-black py-3 text-[10px] font-black uppercase tracking-widest rounded-lg hover:bg-zinc-200 transition-all shadow-[0_0_20px_rgba(255,255,255,0.1)]">Kütüphaneye Ekle</button>
+                    <button id="saveStyleBtn" onclick="saveStyleToLibrary()" class="flex-1 shadcn-button-primary py-3 text-[10px] font-black uppercase tracking-widest rounded-lg">Kütüphaneye Ekle</button>
                 </div>
             </div>
         </div>

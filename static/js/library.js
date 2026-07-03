@@ -1,39 +1,5 @@
 function showResults(songs) {
-    goToStep(4);
-    const container = document.getElementById('resultsContainer');
-    container.innerHTML = '';
-    songs.forEach((song,i) => {
-        const dur = song.duration>0 ? `${Math.round(song.duration/1000)}s` : 'N/A';
-        const url = `/api/download/${song.song_id}`;
-        container.innerHTML += `
-            <div class="shadcn-card p-6 mb-4 fade-in" data-sid="${song.song_id}" data-title="${(song.title||'Versiyon '+(i+1)).replace(/"/g,'&quot;')}" data-dur="${song.duration||0}" data-ready="true" style="animation-delay:${i*0.1}s">
-                <div class="flex justify-between items-center">
-                    <div>
-                        <div class="flex items-center gap-3 mb-2">
-                            <span class="w-8 h-8 bg-zinc-900 border border-zinc-800 rounded-md flex items-center justify-center text-[10px] font-bold text-zinc-400">${i+1}</span>
-                            <span class="text-lg font-bold tracking-tight">${song.title || 'Versiyon '+(i+1)}</span>
-                        </div>
-                        <div class="flex items-center gap-4 text-xs font-bold uppercase tracking-widest text-zinc-500">
-                            <span><i class="fa-regular fa-clock mr-1.5"></i>${dur}</span>
-                            <span class="text-zinc-400"><i class="fa-solid fa-check mr-1.5"></i>Hazır</span>
-                        </div>
-                    </div>
-                    <div class="flex gap-2">
-                        <button onclick="togglePlay('${song.song_id}',this)" class="shadcn-button-secondary px-4 py-2 text-xs flex items-center gap-2">
-                            <i class="fa-solid fa-play text-[10px]"></i> Dinle
-                        </button>
-                        <a href="${url}" download class="shadcn-button-primary px-4 py-2 text-xs flex items-center gap-2">
-                            <i class="fa-solid fa-download text-[10px]"></i> İndir
-                        </a>
-                        <button onclick="openVideoModal('${song.song_id}','${(song.title||'Versiyon '+(i+1)).replace(/'/g,"\\'").replace(/"/g,"&quot;")}')" class="shadcn-button-primary px-4 py-2 text-xs flex items-center gap-2">
-                            <i class="fa-solid fa-film text-[10px]"></i> Klip
-                        </button>
-                    </div>
-                </div>
-                ${song.lyric ? `<details class="mt-6"><summary class="text-[10px] font-bold uppercase tracking-widest text-zinc-500 cursor-pointer hover:text-white transition"><i class="fa-solid fa-chevron-right mr-1.5"></i>Şarkı Sözleri</summary><pre class="text-xs text-zinc-400 mt-3 whitespace-pre-wrap bg-zinc-950 border border-zinc-900 rounded-md p-4 max-h-40 overflow-y-auto leading-relaxed">${song.lyric}</pre></details>` : ''}
-            </div>
-        `;
-    });
+    // Sonuçlar paneli kaldırıldı, tüm şarkılar kütüphanede listeleniyor
 }
 let libraryPage = 1;
 let libraryLoading = false;

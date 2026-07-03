@@ -26,10 +26,15 @@ async function createSong() {
 
     try {
         if(typeof removeDraftState === 'function') removeDraftState('active_cover');
-        const resp = await fetch('/api/make-song', {
+        const endpoint = state.mode === 'text-to-song' ? '/api/text-to-song' : '/api/make-song';
+        const bodyData = state.mode === 'text-to-song' 
+            ? { title: state.title, lyrics: state.lyrics, style: state.style, mv: state.mv, bypass_filter: state.bypassFilter }
+            : { audio_id: state.audioId, title: state.title, lyrics: state.lyrics, style: state.style, mv: state.mv, bypass_filter: state.bypassFilter };
+
+        const resp = await fetch(endpoint, {
             method:'POST',
             headers:{'Content-Type':'application/json'},
-            body: JSON.stringify({audio_id:state.audioId, title:state.title, lyrics:state.lyrics, style:state.style, mv:state.mv})
+            body: JSON.stringify(bodyData)
         });
         const data = await resp.json();
         if(data.data && data.data.song_ids) {
@@ -113,7 +118,6 @@ async function pollForTask(taskId, songIds) {
                     }
                     text.innerHTML = '<span class="text-white">Tamamlandı!</span>';
                     loadAllSongs();
-                    setTimeout(()=>showResults(songs), 500);
                     if(activeTasks[taskId]) { delete activeTasks[taskId]; saveActiveTasks(); }
                     return;
                 }
