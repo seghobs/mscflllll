@@ -70,7 +70,7 @@ async function loadAllSongs(isNextPage = false) {
             if (isReady) {
                 const isPlayingThis = (fpAudio && !fpAudio.paused && fpCurrentId && fpCurrentId.includes(songUuid));
                 const btnContent = isPlayingThis 
-                    ? `<i class="fa-solid fa-headphones fa-beat text-[10px] text-emerald-400"></i> Dinleniyor..` 
+                    ? `<div class="audio-wave text-emerald-400"><span class="bar bar1"></span><span class="bar bar2"></span><span class="bar bar3"></span><span class="bar bar4"></span></div><span class="text-emerald-400 font-semibold">Dinleniyor..</span>` 
                     : `<i class="fa-solid fa-play text-[10px]"></i> Dinle`;
                     
                 actions = `
@@ -136,12 +136,12 @@ function togglePlay(uuid, btn) {
 
     if(fpAudio && fpCurrentId === url && fpAudio.paused) {
         fpAudio.play();
-        btn.innerHTML = '<i class="fa-solid fa-headphones fa-beat text-[10px] text-emerald-400"></i> Dinleniyor..';
+        btn.innerHTML = '<div class="audio-wave text-emerald-400"><span class="bar bar1"></span><span class="bar bar2"></span><span class="bar bar3"></span><span class="bar bar4"></span></div><span class="text-emerald-400 font-semibold">Dinleniyor..</span>';
         return;
     }
 
     if(typeof playLocalSong === 'function') playLocalSong(uuid, title);
-    btn.innerHTML = '<i class="fa-solid fa-headphones fa-beat text-[10px] text-emerald-400"></i> Dinleniyor..';
+    btn.innerHTML = '<div class="audio-wave text-emerald-400"><span class="bar bar1"></span><span class="bar bar2"></span><span class="bar bar3"></span><span class="bar bar4"></span></div><span class="text-emerald-400 font-semibold">Dinleniyor..</span>';
 }
 
 function resetLibraryPlayButtons() {

@@ -466,7 +466,7 @@ function updateLibraryPlayButtons(currentId) {
     if (card) {
         const btn = card.querySelector('button[onclick^="togglePlay"]');
         if (btn) {
-            btn.innerHTML = '<i class="fa-solid fa-headphones fa-beat text-[10px] text-emerald-400"></i> Dinleniyor..';
+            btn.innerHTML = '<div class="audio-wave text-emerald-400"><span class="bar bar1"></span><span class="bar bar2"></span><span class="bar bar3"></span><span class="bar bar4"></span></div><span class="text-emerald-400 font-semibold">Dinleniyor..</span>';
         }
     }
 }
