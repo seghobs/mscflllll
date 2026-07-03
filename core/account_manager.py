@@ -2,7 +2,7 @@ import os
 import json
 import hashlib
 from curl_cffi import requests as crequests
-from .config import TOKENS_FILE, ACCOUNTS_FILE
+from .config import TOKENS_FILE, ACCOUNTS_FILE, safe_read_json, safe_write_json
 
 DRISION_ACCOUNTS_FILE = ACCOUNTS_FILE
 
@@ -71,8 +71,9 @@ def switch_to_next_account():
         print(f"[AccountManager] Hata: {DRISION_ACCOUNTS_FILE} bulunamadi!")
         return None
         
-    with open(DRISION_ACCOUNTS_FILE, "r", encoding="utf-8") as f:
-        accounts_data = json.load(f)
+    accounts_data = safe_read_json(DRISION_ACCOUNTS_FILE)
+    if not accounts_data:
+        accounts_data = {}
         
     bot = MusicfulBot()
     new_token = None
@@ -128,15 +129,11 @@ def switch_to_next_account():
                         continue
             
     if account_updated:
-        with open(DRISION_ACCOUNTS_FILE, "w", encoding="utf-8") as f:
-            json.dump(accounts_data, f, indent=4)
+        safe_write_json(DRISION_ACCOUNTS_FILE, accounts_data, indent=4)
             
     if new_token:
         # Update local tokens.json
-        tokens = []
-        if os.path.exists(TOKENS_FILE):
-            with open(TOKENS_FILE, "r", encoding="utf-8") as f:
-                tokens = json.load(f)
+        tokens = safe_read_json(TOKENS_FILE) or []
                 
         # Set all to inactive
         for t in tokens:
@@ -159,8 +156,7 @@ def switch_to_next_account():
                 "active": True
             })
             
-        with open(TOKENS_FILE, "w", encoding="utf-8") as f:
-            json.dump(tokens, f, indent=2, ensure_ascii=False)
+        safe_write_json(TOKENS_FILE, tokens)
             
         return new_token
         

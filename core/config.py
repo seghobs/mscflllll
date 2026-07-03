@@ -1,4 +1,43 @@
 import os
+import json
+import threading
+import time
+import random
+
+_file_lock = threading.Lock()
+
+def safe_read_json(filepath):
+    for i in range(15):
+        try:
+            with _file_lock:
+                if not os.path.exists(filepath):
+                    return None
+                with open(filepath, "r", encoding="utf-8") as f:
+                    content = f.read().strip()
+                    if not content:
+                        return None
+                    return json.loads(content)
+        except (PermissionError, json.JSONDecodeError):
+            time.sleep(random.uniform(0.05, 0.2))
+    raise RuntimeError(f"Could not safely read JSON file: {filepath}")
+
+def safe_write_json(filepath, data, indent=2):
+    for i in range(15):
+        try:
+            with _file_lock:
+                temp_filepath = filepath + ".tmp"
+                with open(temp_filepath, "w", encoding="utf-8") as f:
+                    json.dump(data, f, indent=indent, ensure_ascii=False)
+                if os.path.exists(filepath):
+                    try:
+                        os.remove(filepath)
+                    except PermissionError:
+                        pass
+                os.replace(temp_filepath, filepath)
+                return
+        except PermissionError:
+            time.sleep(random.uniform(0.05, 0.2))
+    raise RuntimeError(f"Could not safely write JSON file: {filepath}")
 
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 

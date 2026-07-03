@@ -1,31 +1,26 @@
 import os
 import json
 import uuid
-from .config import TOKENS_FILE, TOKEN_LEGACY
+from .config import TOKENS_FILE, TOKEN_LEGACY, safe_read_json, safe_write_json
 from .account_manager import switch_to_next_account
 
 def _init_tokens():
     if os.path.exists(TOKENS_FILE):
         return
     if os.path.exists(TOKEN_LEGACY):
-        with open(TOKEN_LEGACY, "r") as f:
-            legacy = json.load(f)
+        legacy = safe_read_json(TOKEN_LEGACY) or {}
         tok = legacy.get("token", "")
         if tok:
-            with open(TOKENS_FILE, "w") as f:
-                json.dump([{"id": "1", "name": "Token 1", "token": tok, "active": True}], f, indent=2)
+            safe_write_json(TOKENS_FILE, [{"id": "1", "name": "Token 1", "token": tok, "active": True}])
     else:
-        with open(TOKENS_FILE, "w") as f:
-            json.dump([], f, indent=2)
+        safe_write_json(TOKENS_FILE, [])
 
 def _read_tokens():
     _init_tokens()
-    with open(TOKENS_FILE, "r", encoding="utf-8") as f:
-        return json.load(f)
+    return safe_read_json(TOKENS_FILE) or []
 
 def _write_tokens(tokens):
-    with open(TOKENS_FILE, "w", encoding="utf-8") as f:
-        json.dump(tokens, f, indent=2, ensure_ascii=False)
+    safe_write_json(TOKENS_FILE, tokens)
 
 def load_token():
     tokens = _read_tokens()
