@@ -108,6 +108,8 @@ function fpClose() {
     document.body.classList.remove('footer-open');
     document.getElementById('fpArt').classList.remove('playing');
     
+    try { localStorage.removeItem('fp_state'); } catch(e) {}
+    
     if (typeof resetLibraryPlayButtons === 'function') {
         resetLibraryPlayButtons();
     }
@@ -174,6 +176,20 @@ function playLocalSong(songId, title) {
     playSong('/api/download/' + songId, title);
 }
 
+function savePlayerState() {
+    if (!fpAudio) return;
+    try {
+        localStorage.setItem('fp_state', JSON.stringify({
+            src: fpAudio.src,
+            currentId: fpCurrentId,
+            title: document.getElementById('fpTitle')?.textContent || '',
+            currentTime: fpAudio.currentTime,
+            paused: fpAudio.paused,
+            timestamp: Date.now()
+        }));
+    } catch(e) {}
+}
+
 function fpBind() {
     if(!fpAudio) return;
     const bar = document.getElementById('fpBar');
@@ -188,6 +204,7 @@ function fpBind() {
             if(bar) bar.style.width = (fpAudio.currentTime / fpAudio.duration * 100) + '%';
             if(cur) cur.textContent = formatTime(fpAudio.currentTime);
         }
+        savePlayerState();
     };
     fpAudio.onloadedmetadata = () => {
         if(dur) dur.textContent = formatTime(fpAudio.duration);
@@ -195,16 +212,20 @@ function fpBind() {
     fpAudio.onplay = () => {
         if(icon) icon.className = 'fa-solid fa-pause';
         if(art) art.classList.add('playing');
+        savePlayerState();
     };
     fpAudio.onpause = () => {
         if(icon) icon.className = 'fa-solid fa-play';
         if(art) art.classList.remove('playing');
+        savePlayerState();
     };
     fpAudio.onended = () => {
         if(icon) icon.className = 'fa-solid fa-play';
         if(art) art.classList.remove('playing');
         if(bar) bar.style.width = '0%';
         if(cur) cur.textContent = '0:00';
+        
+        try { localStorage.removeItem('fp_state'); } catch(e) {}
         
         if (typeof playNextLibrarySong === 'function') {
             playNextLibrarySong();
@@ -357,3 +378,87 @@ function playNextLibrarySong() {
         nextIndex++;
     }
 }
+
+function restorePlayerState() {
+    try {
+        const saved = localStorage.getItem('fp_state');
+        if (!saved) return;
+        
+        const stateObj = JSON.parse(saved);
+        if (Date.now() - stateObj.timestamp > 600000) {
+            localStorage.removeItem('fp_state');
+            return;
+        }
+        
+        if (stateObj.src && stateObj.title) {
+            const titleEl = document.getElementById('fpTitle');
+            if (titleEl) titleEl.textContent = stateObj.title;
+            document.getElementById('footerPlayer')?.classList.add('active');
+            document.body.classList.add('footer-open');
+            
+            fpAudio = new Audio();
+            fpAudio.preload = 'auto';
+            fpAudio.src = stateObj.src;
+            fpCurrentId = stateObj.currentId || stateObj.src;
+            
+            let savedVol = localStorage.getItem('global_volume');
+            if (savedVol !== null) {
+                fpAudio.volume = parseFloat(savedVol);
+                const slider = document.getElementById('fpVolSlider');
+                if(slider) slider.value = savedVol;
+            }
+            
+            fpBind();
+            
+            fpAudio.addEventListener('loadedmetadata', () => {
+                fpAudio.currentTime = stateObj.currentTime;
+                const bar = document.getElementById('fpBar');
+                const cur = document.getElementById('fpCur');
+                const dur = document.getElementById('fpDur');
+                if(bar) bar.style.width = (stateObj.currentTime / fpAudio.duration * 100) + '%';
+                if(cur) cur.textContent = formatTime(stateObj.currentTime);
+                if(dur) dur.textContent = formatTime(fpAudio.duration);
+                
+                if (!stateObj.paused) {
+                    fpAudio.play().then(() => {
+                        updateLibraryPlayButtons(fpCurrentId);
+                    }).catch(err => {
+                        console.log("Autoplay blocked by browser policy. Loaded paused at position.");
+                        const icon = document.getElementById('fpPlayIcon');
+                        if (icon) icon.className = 'fa-solid fa-play';
+                        document.getElementById('fpArt')?.classList.remove('playing');
+                    });
+                } else {
+                    const icon = document.getElementById('fpPlayIcon');
+                    if (icon) icon.className = 'fa-solid fa-play';
+                    document.getElementById('fpArt')?.classList.remove('playing');
+                }
+            }, {once: true});
+            
+            fpAudio.load();
+        }
+    } catch (e) {
+        console.warn("Could not restore player state:", e);
+    }
+}
+
+function updateLibraryPlayButtons(currentId) {
+    if (!currentId) return;
+    let songUuid = "";
+    if (currentId.includes("/api/download/")) {
+        songUuid = currentId.split("/api/download/")[1];
+    } else {
+        return;
+    }
+    const card = document.querySelector(`.shadcn-card[data-sid="${songUuid}"]`);
+    if (card) {
+        const btn = card.querySelector('button[onclick^="togglePlay"]');
+        if (btn) {
+            btn.innerHTML = '<i class="fa-solid fa-headphones fa-beat text-[10px] text-emerald-400"></i> Dinleniyor..';
+        }
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    setTimeout(restorePlayerState, 500);
+});
